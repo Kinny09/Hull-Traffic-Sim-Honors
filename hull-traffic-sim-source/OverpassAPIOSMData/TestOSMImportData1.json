@@ -1,0 +1,272 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+	"timestamp_osm_base": "2025-11-09T16:24:35Z",
+	"copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 258353993,
+  "lat": 53.7786091,
+  "lon": -0.3653979,
+  "tags": {
+	"direction": "clockwise",
+	"highway": "mini_roundabout"
+  }
+},
+{
+  "type": "node",
+  "id": 258353998,
+  "lat": 53.7738194,
+  "lon": -0.3637922,
+  "tags": {
+	"direction": "clockwise",
+	"highway": "mini_roundabout"
+  }
+},
+{
+  "type": "node",
+  "id": 258354002,
+  "lat": 53.7704869,
+  "lon": -0.3624885
+},
+{
+  "type": "node",
+  "id": 258354003,
+  "lat": 53.7696854,
+  "lon": -0.3622181
+},
+{
+  "type": "node",
+  "id": 258354005,
+  "lat": 53.7688546,
+  "lon": -0.3618962,
+  "tags": {
+	"highway": "traffic_signals"
+  }
+},
+{
+  "type": "node",
+  "id": 271729382,
+  "lat": 53.7758001,
+  "lon": -0.3644727
+},
+{
+  "type": "node",
+  "id": 271729400,
+  "lat": 53.7761710,
+  "lon": -0.3645963,
+  "tags": {
+	"ref:GB:uprn": "10008632714"
+  }
+},
+{
+  "type": "node",
+  "id": 271729401,
+  "lat": 53.7762290,
+  "lon": -0.3639024
+},
+{
+  "type": "node",
+  "id": 271729402,
+  "lat": 53.7762807,
+  "lon": -0.3635981
+},
+{
+  "type": "node",
+  "id": 271729403,
+  "lat": 53.7765006,
+  "lon": -0.3635633
+},
+{
+  "type": "node",
+  "id": 271729404,
+  "lat": 53.7766342,
+  "lon": -0.3635892
+},
+{
+  "type": "node",
+  "id": 849583407,
+  "lat": 53.7746838,
+  "lon": -0.3641037
+},
+{
+  "type": "node",
+  "id": 1195995446,
+  "lat": 53.7721718,
+  "lon": -0.3631061
+},
+{
+  "type": "node",
+  "id": 3054468544,
+  "lat": 53.7762405,
+  "lon": -0.3636873
+},
+{
+  "type": "node",
+  "id": 3054468551,
+  "lat": 53.7763673,
+  "lon": -0.3635483
+},
+{
+  "type": "node",
+  "id": 3054468564,
+  "lat": 53.7766638,
+  "lon": -0.3636843
+},
+{
+  "type": "node",
+  "id": 3054468567,
+  "lat": 53.7766942,
+  "lon": -0.3634969
+},
+{
+  "type": "node",
+  "id": 3056242941,
+  "lat": 53.7762106,
+  "lon": -0.3642465
+},
+{
+  "type": "node",
+  "id": 3060869664,
+  "lat": 53.7704561,
+  "lon": -0.3624781
+},
+{
+  "type": "node",
+  "id": 3119630521,
+  "lat": 53.7722658,
+  "lon": -0.3631449
+},
+{
+  "type": "node",
+  "id": 5165774408,
+  "lat": 53.7769513,
+  "lon": -0.3648529
+},
+{
+  "type": "node",
+  "id": 6885371909,
+  "lat": 53.7692901,
+  "lon": -0.3620649
+},
+{
+  "type": "node",
+  "id": 6948805252,
+  "lat": 53.7743526,
+  "lon": -0.3639843
+},
+{
+  "type": "node",
+  "id": 6948805255,
+  "lat": 53.7756336,
+  "lon": -0.3644177
+},
+{
+  "type": "node",
+  "id": 6948805259,
+  "lat": 53.7782396,
+  "lon": -0.3652764
+},
+{
+  "type": "node",
+  "id": 6948805267,
+  "lat": 53.7781633,
+  "lon": -0.3652514
+},
+{
+  "type": "node",
+  "id": 7601448437,
+  "lat": 53.7745903,
+  "lon": -0.3640700
+},
+{
+  "type": "node",
+  "id": 7601448438,
+  "lat": 53.7745294,
+  "lon": -0.3640480
+},
+{
+  "type": "way",
+  "id": 23841529,
+  "nodes": [
+	258354005,
+	6885371909,
+	258354003,
+	3060869664,
+	258354002,
+	1195995446,
+	3119630521,
+	258353998,
+	6948805252,
+	7601448438,
+	7601448437,
+	849583407,
+	6948805255,
+	271729382,
+	271729400,
+	5165774408,
+	6948805267,
+	6948805259,
+	258353993
+  ],
+  "tags": {
+	"cycleway:left": "no",
+	"cycleway:right": "shared_lane",
+	"cycleway:right:lane": "pictogram",
+	"highway": "residential",
+	"lanes": "2",
+	"lit": "yes",
+	"maxspeed": "30 mph",
+	"name": "Cranbrook Avenue",
+	"sidewalk": "both",
+	"sidewalk:both:surface": "asphalt",
+	"source": "survey",
+	"surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 24995370,
+  "nodes": [
+	271729400,
+	3056242941,
+	271729401,
+	3054468544,
+	271729402,
+	3054468551,
+	271729403,
+	271729404
+  ],
+  "tags": {
+	"highway": "residential",
+	"lit": "yes",
+	"maxspeed": "30 mph",
+	"name": "Lawsons Close",
+	"not:name": "Lawson Close",
+	"source": "survey"
+  }
+},
+{
+  "type": "way",
+  "id": 301399423,
+  "nodes": [
+	3054468567,
+	271729404,
+	3054468564
+  ],
+  "tags": {
+	"highway": "residential",
+	"lit": "yes",
+	"maxspeed": "30 mph",
+	"name": "Lawsons Close",
+	"not:name": "Lawson Close",
+	"source": "survey"
+  }
+}
+
+  ]
+}
