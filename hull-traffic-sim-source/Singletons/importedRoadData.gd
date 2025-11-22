@@ -9,12 +9,40 @@ var finishedImporting = false
 
 var pathToRoadData = "res://OverpassAPIOSMData/TestOSMImportData1.json"
 
+## Two reference points that link the bounding box for the data to on screen coordinates
+var topLeftReferencePoint =  {
+	"screenX": -1000,
+	"screenY": -1324,
+	"latitude": 53.8109399,
+	"longitude": -0.4836188,
+	"globalX": 0,
+	"globalY": 0
+}
+
+var bottomRightReferencePoint =  {
+	"screenX": 1000,
+	"screenY": 1324,
+	"latitude": 53.715000,
+	"longitude": -0.2109668,
+	"globalX": 0,
+	"globalY": 0
+}
+
+var radiusOfEarth = 6371
+
 func _ready():
+	var position = convertLongLatToGlobalXY(topLeftReferencePoint["latitude"], topLeftReferencePoint["longitude"])
+	topLeftReferencePoint["globalX"] = position[0]
+	topLeftReferencePoint["globalY"] = position[1]
+	
+	position = convertLongLatToGlobalXY(bottomRightReferencePoint["latitude"], bottomRightReferencePoint["longitude"])
+	bottomRightReferencePoint["globalX"] = position[0]
+	bottomRightReferencePoint["globalY"] = position[1]
+	
 	var data = loadJsonFile(pathToRoadData)
 	nodeData = data[0]
 	waysData = data[1]
 	finishedImporting = true
-
 
 func loadJsonFile(filePath : String):
 	if FileAccess.file_exists(filePath):
@@ -33,6 +61,15 @@ func loadJsonFile(filePath : String):
 			for object in parsedResult.elements:	
 				if object.type == "node":
 					parsedNodes[object.id] = object.duplicate(true)
+					var nodeBeingEdited = parsedNodes[object.id]
+					
+					# converting the Longitude and Latitutde to X and Y
+					var latitude = nodeBeingEdited["lat"] 
+					var longitude = nodeBeingEdited["lon"]
+					
+					var position = convertLongLatToScreenXY(latitude, longitude)
+					nodeBeingEdited["X"] = position[1]
+					nodeBeingEdited["Y"] = position[0]
 						
 				elif object.type == "way":
 					parsedWays[object.id] = object.duplicate(true)
@@ -42,3 +79,20 @@ func loadJsonFile(filePath : String):
 			print("Error reading File")
 	else:
 		print("File dosen't exist")
+
+## https://stackoverflow.com/questions/16266809/convert-from-latitude-longitude-to-x-y
+
+func convertLongLatToGlobalXY(longitude : float, latitude : float):
+	var x = radiusOfEarth * longitude * cos((topLeftReferencePoint["latitude"] + bottomRightReferencePoint["latitude"])/2)
+	var y = radiusOfEarth * latitude
+	return [x, y]
+	
+func convertLongLatToScreenXY(longitude : float, latitude : float):
+	var position = convertLongLatToGlobalXY(longitude, latitude)
+	var x = ((position[0]-topLeftReferencePoint["globalX"])/(bottomRightReferencePoint["globalX"] - topLeftReferencePoint["globalX"]))
+	var y = ((position[1]-topLeftReferencePoint["globalY"])/(bottomRightReferencePoint["globalY"] - topLeftReferencePoint["globalY"]))
+	
+	x = topLeftReferencePoint["screenX"] + (bottomRightReferencePoint["screenX"] - topLeftReferencePoint["screenX"]) * x
+	y = topLeftReferencePoint["screenY"] + (bottomRightReferencePoint["screenY"] - topLeftReferencePoint["screenY"]) * y
+	
+	return [x, y]
