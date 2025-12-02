@@ -7,12 +7,12 @@ var nodeData = {}
 var waysData = {}
 var finishedImporting = false
 
-var pathToRoadData = "res://OverpassAPIOSMData/TestOSMImportData1.json"
+var pathToRoadData = "res://OverpassAPIOSMData/TestOSMData1.json"
 
 ## Two reference points that link the bounding box for the data to on screen coordinates
 var topLeftReferencePoint =  {
-	"screenX": -1000,
-	"screenY": -1324,
+	"screenX": -2000,
+	"screenY": -2324,
 	"latitude": 53.8109399,
 	"longitude": -0.4836188,
 	"globalX": 0,
@@ -20,8 +20,8 @@ var topLeftReferencePoint =  {
 }
 
 var bottomRightReferencePoint =  {
-	"screenX": 1000,
-	"screenY": 1324,
+	"screenX": 2000,
+	"screenY": 2324,
 	"latitude": 53.715000,
 	"longitude": -0.2109668,
 	"globalX": 0,
