@@ -105,9 +105,9 @@ func _ready() -> void:
 				roadLength = roadLength + oldVector.distance_to(currentVector)
 				
 			# Checking for adjacent roads
-			for wayToCheck in importedRoadData.waysData.values():
-				if nodeID in wayToCheck["nodes"]:
-					adjacentRoads.append(way["id"])
+			#for wayToCheck in importedRoadData.waysData.values():
+				#if nodeID in wayToCheck["nodes"]:
+					#adjacentRoads.append(way["id"])
 			
 			oldVector = Vector2(node.X, node.Y)
 		newRoad.add_child(newPavementLine)
