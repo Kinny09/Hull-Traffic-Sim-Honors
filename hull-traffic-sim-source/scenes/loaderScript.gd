@@ -79,13 +79,18 @@ func _ready() -> void:
 		newCarLine.z_index = newCarLine.z_index + zIndexAdditon
 		newDividerLine.z_index = newDividerLine.z_index + zIndexAdditon
 		
+		# Moving the building to a place near it's real position
+		var randomNode = importedRoadData.nodeData[way["nodes"][0]]
+		var globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
+		newRoad.set_global_position(globalRoadPosition)
+		
 		var dictionaryOfNodes = {}
 		var oldVector = Vector2(0, 0)
 		var roadLength = 0.0
 		var adjacentRoads = []
 		for nodeID in way["nodes"]:
 			var node = importedRoadData.nodeData[nodeID]
-			var currentVector = Vector2(node.X, node.Y)
+			var currentVector = Vector2(node.X, node.Y) - globalRoadPosition
 			node.erase("type")
 			node.erase("lat")
 			node.erase("lon")
@@ -132,7 +137,7 @@ func _ready() -> void:
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	var buildingCount = 0
 	var buildingsNode = $"../Buildings"
-	var roadNode = $"../Roads"
+	#var roadNode = $"../Roads"
 
 	for buildingWay in importedRoadData.buildingWaysData.values():
 		# Declaring Important Variables
