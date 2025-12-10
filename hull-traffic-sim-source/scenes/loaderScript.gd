@@ -1,6 +1,9 @@
 extends Node
 
 func _ready() -> void:
+	# -----------------------------------------------------------------------------------------------------------------------------------------------------
+	# Loading the Roads
+	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	for way in importedRoadData.waysData.values():
 		# Creating the road nodes and adding their meta data
 		var newRoad = Node2D.new()
@@ -123,6 +126,61 @@ func _ready() -> void:
 		
 		# Adding the adjacent roads to the road meta data
 		newRoad.set_meta("adjacentRoads", adjacentRoads)
+		
+	# -----------------------------------------------------------------------------------------------------------------------------------------------------
+	# Loading the Buildings
+	# -----------------------------------------------------------------------------------------------------------------------------------------------------
+	var buildingCount = 0
+	var buildingsNode = $"../Buildings"
+	var roadNode = $"../Roads"
+
+	for buildingWay in importedRoadData.buildingWaysData.values():
+		# Declaring Important Variables
+		var buildingType = buildingWay["tags"]["building"]
+		var newBuilding = null
+		buildingCount = buildingCount + 1
+		
+		#Sorting the buildings into their respective types
+		match buildingType:
+			"house", "apartments", "dormitory":
+				newBuilding = get_node("../BuildingAssets/residential").duplicate()
+			"roof":
+				newBuilding = get_node("../BuildingAssets/place").duplicate()
+			_:
+				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
+				
+		# Moving the building to a place near it's real position
+		var randomNode = importedRoadData.buildingNodeData[buildingWay["nodes"][0]]
+		var globalBuildingPosition = Vector2(randomNode["X"], randomNode["Y"])
+		newBuilding.set_global_position(globalBuildingPosition)
+		
+		# Drawing the buildings shape
+		var buildingShape = newBuilding.get_node("shape")
+		var arrayOfVectors = []
+		for nodeID in buildingWay["nodes"]:
+			var node = importedRoadData.buildingNodeData[nodeID]
+			var currentVector = Vector2(node.X, node.Y) - globalBuildingPosition
+			arrayOfVectors.append(currentVector)
+		buildingShape.set_polygon(arrayOfVectors)
+		
+		# Finding the nearest road to set as the access road
+		#for roads in roadNode.get_children():
+			#pass
+		
+		# Setting non-building specific meta data
+		newBuilding.name = str(buildingCount)
+		newBuilding.set_meta("buildingID", buildingCount)
+		newBuilding.set_meta("buildingType", buildingType)
+		newBuilding.set_meta("nodes", buildingWay["nodes"])
+		
+		# Making the building visible
+		newBuilding.visible = true
+		
+		# Adding buildings to the building node
+		buildingsNode.add_child(newBuilding)
+		
+	# Removing the imported data node as it is no longer needed
+	importedRoadData.queue_free()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()

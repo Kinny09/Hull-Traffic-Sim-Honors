@@ -5,9 +5,11 @@ extends Node
 
 var nodeData = {}
 var waysData = {}
-var finishedImporting = false
+var buildingNodeData = {}
+var buildingWaysData = {}
 
 var pathToRoadData = "res://OverpassAPIOSMData/TestOSMData1.json"
+var pathToBuildingData ="res://OverpassAPIOSMData/SmallerBuildingOSMData.json" 
 
 ## Two reference points that link the bounding box for the data to on screen coordinates
 var topLeftReferencePoint =  {
@@ -42,7 +44,10 @@ func _ready():
 	var data = loadJsonFile(pathToRoadData)
 	nodeData = data[0]
 	waysData = data[1]
-	finishedImporting = true
+	
+	data = loadJsonFile(pathToBuildingData)
+	buildingNodeData = data[0]
+	buildingWaysData = data[1]
 
 func loadJsonFile(filePath : String):
 	if FileAccess.file_exists(filePath):
