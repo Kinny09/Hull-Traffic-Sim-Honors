@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dwl0im38iqcjv"]
 
-[ext_resource type="Script" uid="uid://c3xj35jq7w1ly" path="res://Scenes/roadLoader.gd" id="1_y5vwh"]
+[ext_resource type="Script" uid="uid://c3xj35jq7w1ly" path="res://Scenes/loaderScript.gd" id="1_y5vwh"]
 
 [node name="Simulation" type="Node2D"]
 
@@ -8,6 +8,8 @@
 
 [node name="Roads" type="Node" parent="."]
 script = ExtResource("1_y5vwh")
+
+[node name="Buildings" type="Node" parent="."]
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 color = Color(1, 0.13333334, 1, 1)
@@ -48,3 +50,44 @@ z_index = 4
 points = PackedVector2Array(0, -2, 0, 2)
 width = 0.2
 default_color = Color(0.9297146, 0.9297147, 0.9297146, 1)
+
+[node name="BuildingAssets" type="Node" parent="."]
+
+[node name="place" type="Node2D" parent="BuildingAssets"]
+visible = false
+metadata/buildingType = ""
+metadata/buildingID = 0
+metadata/nodes = []
+
+[node name="shape" type="Polygon2D" parent="BuildingAssets/place"]
+z_index = 100
+color = Color(0.76861495, 0.00022217154, 0.7014212, 1)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
+
+[node name="residential" type="Node2D" parent="BuildingAssets"]
+visible = false
+metadata/buildingType = ""
+metadata/buildingID = 0
+metadata/nodes = []
+metadata/accessRoad = 0.0
+metadata/numberOfResidents = 0
+metadata/workplaces = []
+
+[node name="shape" type="Polygon2D" parent="BuildingAssets/residential"]
+z_index = 100
+color = Color(2.4065375e-06, 0.55900246, 0.20169646, 1)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
+
+[node name="workplace" type="Node2D" parent="BuildingAssets"]
+visible = false
+metadata/buildingType = ""
+metadata/buildingID = 0
+metadata/nodes = []
+metadata/accessRoad = 0.0
+metadata/employmentCapacity = 0
+metadata/numberOfEmployees = 0
+
+[node name="shape" type="Polygon2D" parent="BuildingAssets/workplace"]
+z_index = 100
+color = Color(0, 0.4653064, 0.8363548, 1)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
