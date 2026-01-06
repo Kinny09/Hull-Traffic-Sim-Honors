@@ -14,7 +14,3 @@ config/name="HullTrafficSimSource"
 run/main_scene="uid://dwl0im38iqcjv"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
-
-[autoload]
-
-importedRoadData="*res://Singletons/importDataScript.gd"
