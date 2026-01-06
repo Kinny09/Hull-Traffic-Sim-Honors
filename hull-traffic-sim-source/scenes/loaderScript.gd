@@ -3,7 +3,7 @@ extends Node
 @onready var ImportedData = $"../ImportedData"
 
 func _ready() -> void:
-	await ImportedData.FINISHED_IMPORTING_DATA
+	await ImportedData.FINISHED_IMPORTING_DATA # Waiting for the data to be imported before constructing the roads and buildings
 	
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	# Loading the Roads

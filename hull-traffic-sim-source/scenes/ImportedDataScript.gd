@@ -5,8 +5,8 @@ extends Node
 
 signal FINISHED_IMPORTING_DATA()
 
-var roadJSON = {}
-var buildingJSON = {}
+var importedRoadDataDictionary = {}
+var importedBuildingDataDictionary = {}
 
 var nodeData = {}
 var waysData = {}
@@ -40,7 +40,7 @@ var bottomRightReferencePoint =  {
 var radiusOfEarth = 6371
 
 func _ready():
-	await HTTPRequestNode.ALL_API_CALLS_DONE
+	await HTTPRequestNode.ALL_API_CALLS_DONE # Waits for all the API calls to be finished before starting
 	
 	var position = convertLongLatToGlobalXY(topLeftReferencePoint["latitude"], topLeftReferencePoint["longitude"])
 	topLeftReferencePoint["globalX"] = position[0]
@@ -50,51 +50,46 @@ func _ready():
 	bottomRightReferencePoint["globalX"] = position[0]
 	bottomRightReferencePoint["globalY"] = position[1]
 	
-	var data = loadJsonFile(roadJSON)
+	var data = loadImportedDataDictionary(importedRoadDataDictionary)
 	nodeData = data[0]
 	waysData = data[1]
 	
-	data = loadJsonFile(buildingJSON)
+	data = loadImportedDataDictionary(importedBuildingDataDictionary)
 	buildingNodeData = data[0]
 	buildingWaysData = data[1]
 	
+	# Tells all the scripts that the data is done being imported
 	FINISHED_IMPORTING_DATA.emit()
 
-func loadJsonFile(filePath : Dictionary):
-	#if FileAccess.file_exists(filePath):
-		#var dataFile = FileAccess.open(filePath, FileAccess.READ)
-		#var parsedResult = JSON.parse_string(dataFile.get_as_text())
-		var parsedResult = filePath
-		if parsedResult is Dictionary:
-			var parsedNodes = {}
-			var parsedWays = {}
-			
-			# Removing unnecassary data
-			parsedResult.erase("version")
-			parsedResult.erase("generator")
-			parsedResult.erase("osm3s")
-			
-			for object in parsedResult.elements:	
-				if object.type == "node":
-					parsedNodes[object.id] = object.duplicate(true)
-					var nodeBeingEdited = parsedNodes[object.id]
+func loadImportedDataDictionary(importedDataDictionary : Dictionary):
+	if importedDataDictionary is Dictionary:
+		var parsedNodes = {}
+		var parsedWays = {}
+		
+		# Removing unnecassary data
+		importedDataDictionary.erase("version")
+		importedDataDictionary.erase("generator")
+		importedDataDictionary.erase("osm3s")
+		
+		for object in importedDataDictionary.elements:	
+			if object.type == "node":
+				parsedNodes[object.id] = object.duplicate(true)
+				var nodeBeingEdited = parsedNodes[object.id]
+				
+				# Converting the Longitude and Latitutde to X and Y
+				var latitude = nodeBeingEdited["lat"] 
+				var longitude = nodeBeingEdited["lon"]
+				
+				var position = convertLongLatToScreenXY(latitude, longitude)
+				nodeBeingEdited["X"] = position[1]
+				nodeBeingEdited["Y"] = position[0]
 					
-					# converting the Longitude and Latitutde to X and Y
-					var latitude = nodeBeingEdited["lat"] 
-					var longitude = nodeBeingEdited["lon"]
-					
-					var position = convertLongLatToScreenXY(latitude, longitude)
-					nodeBeingEdited["X"] = position[1]
-					nodeBeingEdited["Y"] = position[0]
-						
-				elif object.type == "way":
-					parsedWays[object.id] = object.duplicate(true)
-			
-			return [parsedNodes, parsedWays]
-		else:
-			print("Error reading File")
-	#else:
-		#print("File dosen't exist")
+			elif object.type == "way":
+				parsedWays[object.id] = object.duplicate(true)
+		
+		return [parsedNodes, parsedWays]
+	else:
+		print("Error reading imported data")
 
 ## https://stackoverflow.com/questions/16266809/convert-from-latitude-longitude-to-x-y
 
