@@ -1,8 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://dwl0im38iqcjv"]
+[gd_scene load_steps=4 format=3 uid="uid://dwl0im38iqcjv"]
 
+[ext_resource type="Script" uid="uid://l2eeeqvrge33" path="res://Scenes/http_request_node.gd" id="1_3p1jw"]
+[ext_resource type="Script" uid="uid://b5uv4qmddijd0" path="res://Scenes/ImportedDataScript.gd" id="1_wpefv"]
 [ext_resource type="Script" uid="uid://c3xj35jq7w1ly" path="res://Scenes/loaderScript.gd" id="1_y5vwh"]
 
 [node name="Simulation" type="Node2D"]
+
+[node name="ImportedData" type="Node" parent="."]
+script = ExtResource("1_wpefv")
+
+[node name="HTTPRequestNode" type="Node" parent="."]
+script = ExtResource("1_3p1jw")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="HTTPRequestNode"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 

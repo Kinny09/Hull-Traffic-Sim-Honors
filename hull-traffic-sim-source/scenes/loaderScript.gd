@@ -1,10 +1,14 @@
 extends Node
 
+@onready var ImportedData = $"../ImportedData"
+
 func _ready() -> void:
+	await ImportedData.FINISHED_IMPORTING_DATA # Waiting for the data to be imported before constructing the roads and buildings
+	
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	# Loading the Roads
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
-	for way in importedRoadData.waysData.values():
+	for way in ImportedData.waysData.values():
 		# Creating the road nodes and adding their meta data
 		var newRoad = Node2D.new()
 		newRoad.name = str(way["id"])
@@ -80,7 +84,7 @@ func _ready() -> void:
 		newDividerLine.z_index = newDividerLine.z_index + zIndexAdditon
 		
 		# Moving the building to a place near it's real position
-		var randomNode = importedRoadData.nodeData[way["nodes"][0]]
+		var randomNode = ImportedData.nodeData[way["nodes"][0]]
 		var globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
 		newRoad.set_global_position(globalRoadPosition)
 		
@@ -89,7 +93,7 @@ func _ready() -> void:
 		var roadLength = 0.0
 		var adjacentRoads = []
 		for nodeID in way["nodes"]:
-			var node = importedRoadData.nodeData[nodeID]
+			var node = ImportedData.nodeData[nodeID]
 			var currentVector = Vector2(node.X, node.Y) - globalRoadPosition
 			node.erase("type")
 			node.erase("lat")
@@ -113,7 +117,7 @@ func _ready() -> void:
 				roadLength = roadLength + oldVector.distance_to(currentVector)
 				
 			# Checking for adjacent roads
-			#for wayToCheck in importedRoadData.waysData.values():
+			#for wayToCheck in ImportedData.waysData.values():
 				#if nodeID in wayToCheck["nodes"]:
 					#adjacentRoads.append(way["id"])
 			
@@ -137,9 +141,8 @@ func _ready() -> void:
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	var buildingCount = 0
 	var buildingsNode = $"../Buildings"
-	#var roadNode = $"../Roads"
 
-	for buildingWay in importedRoadData.buildingWaysData.values():
+	for buildingWay in ImportedData.buildingWaysData.values():
 		# Declaring Important Variables
 		var buildingType = buildingWay["tags"]["building"]
 		var newBuilding = null
@@ -155,7 +158,7 @@ func _ready() -> void:
 				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
 				
 		# Moving the building to a place near it's real position
-		var randomNode = importedRoadData.buildingNodeData[buildingWay["nodes"][0]]
+		var randomNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
 		var globalBuildingPosition = Vector2(randomNode["X"], randomNode["Y"])
 		newBuilding.set_global_position(globalBuildingPosition)
 		
@@ -163,7 +166,7 @@ func _ready() -> void:
 		var buildingShape = newBuilding.get_node("shape")
 		var arrayOfVectors = []
 		for nodeID in buildingWay["nodes"]:
-			var node = importedRoadData.buildingNodeData[nodeID]
+			var node = ImportedData.buildingNodeData[nodeID]
 			var currentVector = Vector2(node.X, node.Y) - globalBuildingPosition
 			arrayOfVectors.append(currentVector)
 		buildingShape.set_polygon(arrayOfVectors)
@@ -185,7 +188,7 @@ func _ready() -> void:
 		buildingsNode.add_child(newBuilding)
 		
 	# Removing the imported data node as it is no longer needed
-	importedRoadData.queue_free()
+	#ImportedData.queue_free()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()
