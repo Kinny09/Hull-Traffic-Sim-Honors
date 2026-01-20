@@ -8,7 +8,7 @@ func _ready() -> void:
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	# Loading the Roads
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
-	for way in ImportedData.waysData.values():
+	for way in ImportedData.roadWaysData.values():
 		# Creating the road nodes and adding their meta data
 		var newRoad = Node2D.new()
 		newRoad.name = str(way["id"])
@@ -84,7 +84,7 @@ func _ready() -> void:
 		newDividerLine.z_index = newDividerLine.z_index + zIndexAdditon
 		
 		# Moving the building to a place near it's real position
-		var randomNode = ImportedData.nodeData[way["nodes"][0]]
+		var randomNode = ImportedData.roadNodeData[way["nodes"][0]]
 		var globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
 		newRoad.set_global_position(globalRoadPosition)
 		
@@ -93,7 +93,7 @@ func _ready() -> void:
 		var roadLength = 0.0
 		var adjacentRoads = []
 		for nodeID in way["nodes"]:
-			var node = ImportedData.nodeData[nodeID]
+			var node = ImportedData.roadNodeData[nodeID]
 			var currentVector = Vector2(node.X, node.Y) - globalRoadPosition
 			node.erase("type")
 			node.erase("lat")

@@ -8,15 +8,12 @@ signal FINISHED_IMPORTING_DATA()
 var importedRoadDataDictionary = {}
 var importedBuildingDataDictionary = {}
 
-var nodeData = {}
-var waysData = {}
+var roadNodeData = {}
+var roadWaysData = {}
 var buildingNodeData = {}
 var buildingWaysData = {}
 
 @onready var HTTPRequestNode = $"../HTTPRequestNode"
-
-@onready var pathToRoadData = "res://OverpassAPIOSMData/RoadOSMData.json"
-@onready var pathToBuildingData ="res://OverpassAPIOSMData/TestBuildingOSMData.json" 
 
 ## Two reference points that link the bounding box for the data to on screen coordinates
 var topLeftReferencePoint =  {
@@ -51,8 +48,8 @@ func _ready():
 	bottomRightReferencePoint["globalY"] = position[1]
 	
 	var data = loadImportedDataDictionary(importedRoadDataDictionary)
-	nodeData = data[0]
-	waysData = data[1]
+	roadNodeData = data[0]
+	roadWaysData = data[1]
 	
 	data = loadImportedDataDictionary(importedBuildingDataDictionary)
 	buildingNodeData = data[0]
@@ -72,20 +69,32 @@ func loadImportedDataDictionary(importedDataDictionary : Dictionary):
 		importedDataDictionary.erase("osm3s")
 		
 		for object in importedDataDictionary.elements:	
+			var objectID = int(object.id)
+			var objectBeingEdited = object.duplicate(true)
+			
+			# Making sure its ID is a proper integer
+			objectBeingEdited["id"] = objectID
+			
 			if object.type == "node":
-				parsedNodes[object.id] = object.duplicate(true)
-				var nodeBeingEdited = parsedNodes[object.id]
-				
 				# Converting the Longitude and Latitutde to X and Y
-				var latitude = nodeBeingEdited["lat"] 
-				var longitude = nodeBeingEdited["lon"]
+				var latitude = objectBeingEdited["lat"] 
+				var longitude = objectBeingEdited["lon"]
 				
 				var position = convertLongLatToScreenXY(latitude, longitude)
-				nodeBeingEdited["X"] = position[1]
-				nodeBeingEdited["Y"] = position[0]
+				objectBeingEdited["X"] = position[1]
+				objectBeingEdited["Y"] = position[0]
+				
+				# Adding the object to the parsedNode list
+				parsedNodes[objectID] = objectBeingEdited
+			
+			if object.type == "way":
+				for nodeIndex in objectBeingEdited["nodes"].size():
+					objectBeingEdited["nodes"][nodeIndex] = int(objectBeingEdited["nodes"][nodeIndex])
+	
 					
-			elif object.type == "way":
-				parsedWays[object.id] = object.duplicate(true)
+				
+				# Adding the object to the parsedWays list
+				parsedWays[objectID] = objectBeingEdited
 		
 		return [parsedNodes, parsedWays]
 	else:

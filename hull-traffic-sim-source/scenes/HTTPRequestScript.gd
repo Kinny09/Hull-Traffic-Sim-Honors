@@ -21,11 +21,17 @@ func _ready() -> void:
 	# Connecting to the _on_request_completed method so the code knows when an API call is finished
 	http_request.request_completed.connect(_on_request_completed)
 	
+	# For just the Uni and Area:
+	# way(53.76953,-0.38532,53.78109,-0.35163)
+	
+	# For all of Hull
+	# way(53.715000,-0.4836188,53.8109399,-0.2109668)
+	
 	# The roads API call
 	query = """
 		[out:json][timeout:50];
 		(
-			way(53.715000,-0.4836188,53.8109399,-0.2109668)
+			way(53.76953,-0.38532,53.78109,-0.35163)
 			["highway"~"^(motorway|trunk|primary|secondary|tertiary|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|residential|unclassified|living_street)$"];
 			>;
 		);
@@ -39,7 +45,8 @@ func _ready() -> void:
 	query = """
 		[out:json][timeout:50];
 		(
-		  way(53.76953,-0.38532,53.78109,-0.35163)["building"];>;
+			way(53.76953,-0.38532,53.78109,-0.35163)
+			["building"];>;
 		);
 		out;
 	"""
