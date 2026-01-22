@@ -83,16 +83,17 @@ func loadImportedDataDictionary(importedDataDictionary : Dictionary):
 				var position = convertLongLatToScreenXY(latitude, longitude)
 				objectBeingEdited["X"] = position[1]
 				objectBeingEdited["Y"] = position[0]
+				objectBeingEdited["adjacentNodes"] = []
 				
 				# Adding the object to the parsedNode list
 				parsedNodes[objectID] = objectBeingEdited
 			
+			# Going through the nodes list for each way and turning all the values into int's
 			if object.type == "way":
 				for nodeIndex in objectBeingEdited["nodes"].size():
-					objectBeingEdited["nodes"][nodeIndex] = int(objectBeingEdited["nodes"][nodeIndex])
-	
+					var nodeID = int(objectBeingEdited["nodes"][nodeIndex])
+					objectBeingEdited["nodes"][nodeIndex] = nodeID
 					
-				
 				# Adding the object to the parsedWays list
 				parsedWays[objectID] = objectBeingEdited
 		

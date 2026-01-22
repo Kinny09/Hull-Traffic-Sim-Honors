@@ -2,48 +2,41 @@ extends Node
 
 @onready var ImportedData = $"../ImportedData"
 
+var roadNodes = {}
+var globalRoadPosition = Vector2(0,0)
+
 func _ready() -> void:
 	await ImportedData.FINISHED_IMPORTING_DATA # Waiting for the data to be imported before constructing the roads and buildings
 	
-	# -----------------------------------------------------------------------------------------------------------------------------------------------------
-	# Loading the Roads
-	# -----------------------------------------------------------------------------------------------------------------------------------------------------
+	## -----------------------------------------------------------------------------------------------------------------------------------------------------
+	## Loading the Roads
+	## -----------------------------------------------------------------------------------------------------------------------------------------------------
+	# Getting the road node data where it should be
+	roadNodes = ImportedData.roadNodeData.duplicate(true)
+	
 	for way in ImportedData.roadWaysData.values():
-		# Creating the road nodes and adding their meta data
-		var newRoad = Node2D.new()
+		# Creating the new road asset node
+		var newRoad = get_node("../LaneAssets/road").duplicate()
 		newRoad.name = str(way["id"])
 		
-		# Sorting out the road tags so the simulator can understand them
+		# Setting the tags that need to always be changed from their defaults
+		newRoad.set_meta("name", str(way["id"]))
+		newRoad.set_meta("nodes", way["nodes"])
+		
+		# Sorting the roads tags
 		var roadTags = way["tags"]
 		
-		#Setting default values for the road meta data
-		newRoad.set_meta("name", str(way["id"]))
-		newRoad.set_meta("speedLimit", 60)
-		newRoad.set_meta("nodes", {})
-		newRoad.set_meta("adjacentRoads", [])
-		newRoad.set_meta("lanes", 2)
-		newRoad.set_meta("lengthOfRoad", 0.0)
-		newRoad.set_meta("oneWay", false)
-		newRoad.set_meta("bridge", false)
-		newRoad.set_meta("lit", false)
-		newRoad.set_meta("trafficCalming", false)
-		newRoad.set_meta("pavement", false)
-		newRoad.set_meta("bikeLane", false)
-		newRoad.set_meta("busLane", false)
-		
-		# Checking if the roads have any road specific data to adjust
 		for tagName in way["tags"]:
 			match tagName:
 				"name":
 					newRoad.set_meta("name", roadTags["name"])
-					
 				"maxspeed":
 					var speed = roadTags["maxspeed"]
 					speed = int(speed.get_slice(" ", 0))
 					newRoad.set_meta("speedLimit", speed)
 					
 				"lanes":
-					newRoad.set_meta("lanes", roadTags[tagName])
+					newRoad.set_meta("lanes", int(roadTags[tagName]))
 					
 				"oneway":
 					newRoad.set_meta("oneWay", figureOutBoolValueForMetaData(roadTags[tagName]))
@@ -65,77 +58,68 @@ func _ready() -> void:
 					
 				"busway" when newRoad.get_meta("busLane") == false:
 					newRoad.set_meta("busLane", figureOutBoolValueForMetaData(roadTags[tagName]))
-	
-		# Drawing the Road
-		var newPavementLine = get_node("../LaneAssets/pavement").duplicate()
-		newPavementLine.clear_points()
 		
-		var newCarLine = get_node("../LaneAssets/car_lane").duplicate()
-		newCarLine.clear_points()
-		
-		var newDividerLine = get_node("../LaneAssets/car_lane_divider").duplicate()
-		newDividerLine.clear_points()
-		
-		var zIndexAdditon = 0
-		if newRoad.get_meta("bridge") == true:
-			zIndexAdditon = zIndexAdditon + 4
-		newPavementLine.z_index = newPavementLine.z_index + zIndexAdditon
-		newCarLine.z_index = newCarLine.z_index + zIndexAdditon
-		newDividerLine.z_index = newDividerLine.z_index + zIndexAdditon
-		
-		# Moving the building to a place near it's real position
-		var randomNode = ImportedData.roadNodeData[way["nodes"][0]]
-		var globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
+		# Moving the road to a place near it's real position
+		var randomNode = roadNodes[way["nodes"][0]]
+		globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
 		newRoad.set_global_position(globalRoadPosition)
+			
+		# Drawing the road
+		var totalNumberOfLanes = newRoad.get_meta("lanes")
+		var roadWidth = 0 
+		var layerNumber = 0
+		var isBridge = newRoad.get_meta("bridge")
+		var newLane = null
 		
-		var dictionaryOfNodes = {}
-		var oldVector = Vector2(0, 0)
-		var roadLength = 0.0
-		var adjacentRoads = []
-		for nodeID in way["nodes"]:
-			var node = ImportedData.roadNodeData[nodeID]
-			var currentVector = Vector2(node.X, node.Y) - globalRoadPosition
-			node.erase("type")
-			node.erase("lat")
-			node.erase("lon")
-			dictionaryOfNodes[nodeID] = node
+		if totalNumberOfLanes % 2 == 0: # If the number of lanes is even
+			# Creating the lane divider
+			newLane = get_node("../LaneAssets/car_lane_divider").duplicate()
+			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
 			
-			newPavementLine.width = 6
-			newPavementLine.add_point(currentVector)
-			newPavementLine.visible = true
-			
-			newCarLine.width = 4
-			newCarLine.add_point(currentVector)
-			newCarLine.visible = true
-
-			newDividerLine.width = 0.2
-			newDividerLine.add_point(currentVector)
-			newDividerLine.visible = true
-			
-			# Calculating the length between two points
-			if oldVector != Vector2(0, 0):
-				roadLength = roadLength + oldVector.distance_to(currentVector)
+			# Creating all the lanes
+			for laneNumber in totalNumberOfLanes / 2:
+				layerNumber = layerNumber + 1
+				newLane = get_node("../LaneAssets/car_lane").duplicate()
+				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+				roadWidth = roadWidth + (newLane.width - roadWidth)
 				
-			# Checking for adjacent roads
-			#for wayToCheck in ImportedData.waysData.values():
-				#if nodeID in wayToCheck["nodes"]:
-					#adjacentRoads.append(way["id"])
+		elif totalNumberOfLanes % 2 == 1: # If the number of lanes is odd
+			# Creating the middle lane
+			newLane = get_node("../LaneAssets/car_lane").duplicate()
+			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+			roadWidth = roadWidth + (newLane.width - roadWidth)
 			
-			oldVector = Vector2(node.X, node.Y)
-		newRoad.add_child(newPavementLine)
-		newRoad.add_child(newCarLine)
-		newRoad.add_child(newDividerLine)
-		add_child(newRoad)
+			# Creating all the lanes
+			for laneNumber in totalNumberOfLanes / 2:
+				layerNumber = layerNumber + 1
+				newLane = get_node("../LaneAssets/car_lane_divider").duplicate()
+				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+				roadWidth = roadWidth + (newLane.width - roadWidth)
+				
+				layerNumber = layerNumber + 1
+				newLane = get_node("../LaneAssets/car_lane").duplicate()
+				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+				roadWidth = roadWidth + (newLane.width - roadWidth)
+				
+		# Creating the pavement
+		newLane = get_node("../LaneAssets/pavement").duplicate()
+		laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+		roadWidth = roadWidth + (newLane.width - roadWidth)
+			
+		# Adding the road to the roads node		
+		add_child(newRoad)	
 		
-		# Adding all the nodes for this road to the road meta data
-		newRoad.set_meta("nodes", dictionaryOfNodes)
+		# Adding adjacent nodes to the nodes list
+		var listOfNodesInWay = way["nodes"]
 		
-		# Adding the length of the road to the road meta data
-		newRoad.set_meta("lengthOfRoad", roadLength)
-		
-		# Adding the adjacent roads to the road meta data
-		newRoad.set_meta("adjacentRoads", adjacentRoads)
-		
+		for nodeIndex in listOfNodesInWay.size() - 1:
+			var nodeID = listOfNodesInWay[nodeIndex]
+			if nodeIndex - 1 >= 0:
+				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex - 1])
+			
+			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
+				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex + 1])
+					
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	# Loading the Buildings
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -148,7 +132,7 @@ func _ready() -> void:
 		var newBuilding = null
 		buildingCount = buildingCount + 1
 		
-		#Sorting the buildings into their respective types
+		# Sorting the buildings into their respective types
 		match buildingType:
 			"house", "apartments", "dormitory":
 				newBuilding = get_node("../BuildingAssets/residential").duplicate()
@@ -158,8 +142,8 @@ func _ready() -> void:
 				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
 				
 		# Moving the building to a place near it's real position
-		var randomNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
-		var globalBuildingPosition = Vector2(randomNode["X"], randomNode["Y"])
+		var randomBuildingNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
+		var globalBuildingPosition = Vector2(randomBuildingNode["X"], randomBuildingNode["Y"])
 		newBuilding.set_global_position(globalBuildingPosition)
 		
 		# Drawing the buildings shape
@@ -197,3 +181,29 @@ func figureOutBoolValueForMetaData(valueToInterpret: String):
 		return false
 	else:
 		return true
+		
+func laneLineConstructorEven(newRoad : Node2D, laneBeingConstructed : Line2D, layerNumber : int, roadWidth : int, listOfNodes : Array, isBridge : bool):
+	var laneWidth = laneBeingConstructed.width
+	
+	# Clearing the lines points
+	laneBeingConstructed.clear_points()
+	
+	# Adding the points for the line
+	for nodeID in listOfNodes:
+		var node = roadNodes[nodeID]
+		var currentVector = Vector2(node.X, node.Y) - globalRoadPosition
+		laneBeingConstructed.add_point(currentVector)
+	
+	# Sorting out the width of the line and Zindex
+	if layerNumber != 0:
+		laneBeingConstructed.width = roadWidth + laneWidth * 2
+		laneBeingConstructed.z_index = laneBeingConstructed.z_index - layerNumber
+	
+	if isBridge == true:
+		laneBeingConstructed.z_index = laneBeingConstructed.z_index + 10
+		
+	# Making the line visible
+	laneBeingConstructed.visible = true
+	
+	# Adding the lane to the road node
+	newRoad.add_child(laneBeingConstructed)
