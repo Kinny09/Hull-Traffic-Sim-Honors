@@ -112,9 +112,9 @@ func _ready() -> void:
 		# Adding adjacent nodes to the nodes list
 		var listOfNodesInWay = way["nodes"]
 		
-		for nodeIndex in listOfNodesInWay.size() - 1:
+		for nodeIndex in listOfNodesInWay.size():
 			var nodeID = listOfNodesInWay[nodeIndex]
-			if nodeIndex - 1 >= 0:
+			if nodeIndex - 1 >= 0 and not newRoad.get_meta("oneWay"):
 				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex - 1])
 			
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
