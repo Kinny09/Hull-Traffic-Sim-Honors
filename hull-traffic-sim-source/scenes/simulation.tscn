@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dwl0im38iqcjv"]
+[gd_scene load_steps=8 format=3 uid="uid://dwl0im38iqcjv"]
 
 [ext_resource type="Script" uid="uid://l2eeeqvrge33" path="res://Scenes/HTTPRequestScript.gd" id="1_3p1jw"]
 [ext_resource type="Script" uid="uid://d1c7oo7tknvjn" path="res://Scenes/debuggingToolsScript.gd" id="1_83pfb"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://c3xj35jq7w1ly" path="res://Scenes/assetConstructorScript.gd" id="1_y5vwh"]
 [ext_resource type="Script" uid="uid://ckuppgvjeohtv" path="res://Scenes/cameraMovementScript.gd" id="4_ypxof"]
 [ext_resource type="Script" uid="uid://cd6wuqsdkcewn" path="res://Scenes/clickDetectorScript.gd" id="5_83pfb"]
+[ext_resource type="PackedScene" uid="uid://cg6ndwf2gjjop" path="res://Scenes/simulation_ui.tscn" id="7_v0ioj"]
 
 [node name="Simulation" type="Node2D"]
 
@@ -133,3 +134,7 @@ polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
 
 [node name="ClickingDetection" type="Area2D" parent="."]
 script = ExtResource("5_83pfb")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="SimulationUI" parent="UILayer" instance=ExtResource("7_v0ioj")]

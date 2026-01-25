@@ -107,9 +107,6 @@ func _ready() -> void:
 		laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
 		roadWidth = roadWidth + (newLane.width - roadWidth)
 		
-		# Creating the click detection zones for the road
-		var clickSegmentCount = 0
-			
 		# Adding the road to the roads node		
 		add_child(newRoad)	
 		
@@ -117,6 +114,8 @@ func _ready() -> void:
 		var listOfNodesInWay = way["nodes"]
 		
 		# Creating the click detectors for the roads
+		var clickSegmentCount = 0
+		
 		for nodeIndex in listOfNodesInWay.size():
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
 				var newClickSegment = CollisionShape2D.new()
@@ -127,7 +126,7 @@ func _ready() -> void:
 				var nodeAheadVector =  Vector2(nodeAhead["X"], nodeAhead["Y"])
 				
 				newClickSegment.shape = RectangleShape2D.new()
-				newClickSegment.name = "road|"+ str(clickSegmentCount) + "|" + str(newRoad.name)
+				newClickSegment.name = "Roads|"+ str(clickSegmentCount) + "|" + str(newRoad.name)
 				newClickSegment.set_global_position((currentNodeVector + nodeAheadVector) / 2)
 				clickSegmentCount = clickSegmentCount + 1
 				
@@ -173,7 +172,7 @@ func _ready() -> void:
 		
 		# Creating the click detection zone for the building
 		var newClickZone = CollisionPolygon2D.new()
-		newClickZone.name = "building|" + str(buildingCount)
+		newClickZone.name = "Buildings|" + str(buildingCount)
 		newClickZone.set_global_position(globalBuildingPosition)
 		newClickZone.z_index = 50
 		
