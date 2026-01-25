@@ -1,6 +1,7 @@
 extends Node
 
 @onready var ImportedData = $"../ImportedData"
+@onready var ClickingDetection = $"../ClickingDetection"
 
 var roadNodes = {}
 var globalRoadPosition = Vector2(0,0)
@@ -146,6 +147,12 @@ func _ready() -> void:
 		var globalBuildingPosition = Vector2(randomBuildingNode["X"], randomBuildingNode["Y"])
 		newBuilding.set_global_position(globalBuildingPosition)
 		
+		# Creating the click detection zone for the building
+		var newClickZone = CollisionPolygon2D.new()
+		newClickZone.name = "building|" + str(buildingCount)
+		newClickZone.set_global_position(globalBuildingPosition)
+		newClickZone.z_index = 50
+		
 		# Drawing the buildings shape
 		var buildingShape = newBuilding.get_node("shape")
 		var arrayOfVectors = []
@@ -154,6 +161,8 @@ func _ready() -> void:
 			var currentVector = Vector2(node.X, node.Y) - globalBuildingPosition
 			arrayOfVectors.append(currentVector)
 		buildingShape.set_polygon(arrayOfVectors)
+		newClickZone.set_polygon(arrayOfVectors)
+		ClickingDetection.add_child(newClickZone)
 		
 		# Finding the nearest road to set as the access road
 		#for roads in roadNode.get_children():
