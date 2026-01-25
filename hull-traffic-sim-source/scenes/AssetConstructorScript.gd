@@ -106,13 +106,37 @@ func _ready() -> void:
 		newLane = get_node("../LaneAssets/pavement").duplicate()
 		laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
 		roadWidth = roadWidth + (newLane.width - roadWidth)
+		
+		# Creating the click detection zones for the road
+		var clickSegmentCount = 0
 			
 		# Adding the road to the roads node		
 		add_child(newRoad)	
 		
-		# Adding adjacent nodes to the nodes list
+		# Adding way nodes to the nodes list
 		var listOfNodesInWay = way["nodes"]
 		
+		# Creating the click detectors for the roads
+		for nodeIndex in listOfNodesInWay.size():
+			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
+				var newClickSegment = CollisionShape2D.new()
+				var currentNode = roadNodes[listOfNodesInWay[nodeIndex]]
+				var nodeAhead = roadNodes[listOfNodesInWay[nodeIndex + 1]]
+				
+				var currentNodeVector = Vector2(currentNode["X"], currentNode["Y"])
+				var nodeAheadVector =  Vector2(nodeAhead["X"], nodeAhead["Y"])
+				
+				newClickSegment.shape = RectangleShape2D.new()
+				newClickSegment.name = "road|"+ str(clickSegmentCount) + "|" + str(newRoad.name)
+				newClickSegment.set_global_position((currentNodeVector + nodeAheadVector) / 2)
+				clickSegmentCount = clickSegmentCount + 1
+				
+				newClickSegment.shape.size = Vector2(currentNodeVector.distance_to(nodeAheadVector), roadWidth)
+				newClickSegment.rotation = (currentNodeVector.angle_to_point(nodeAheadVector))
+				
+				ClickingDetection.add_child(newClickSegment)
+		
+		# Finding nodes that are adjacent to each other and documenting that
 		for nodeIndex in listOfNodesInWay.size():
 			var nodeID = listOfNodesInWay[nodeIndex]
 			if nodeIndex - 1 >= 0 and not newRoad.get_meta("oneWay"):
