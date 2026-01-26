@@ -22,6 +22,7 @@ func _ready() -> void:
 		
 		# Setting the tags that need to always be changed from their defaults
 		newRoad.set_meta("name", str(way["id"]))
+		newRoad.set_meta("id", str(way["id"]))
 		newRoad.set_meta("nodes", way["nodes"])
 		
 		# Sorting the roads tags
@@ -106,6 +107,9 @@ func _ready() -> void:
 		newLane = get_node("../LaneAssets/pavement").duplicate()
 		laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
 		roadWidth = roadWidth + (newLane.width - roadWidth)
+		
+		# Setting the width of the road
+		newRoad.set_meta("roadWidth", roadWidth)
 		
 		# Adding the road to the roads node		
 		add_child(newRoad)	
