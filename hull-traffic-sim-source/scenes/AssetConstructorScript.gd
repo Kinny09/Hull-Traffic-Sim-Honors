@@ -77,36 +77,45 @@ func _ready() -> void:
 			# Creating the lane divider
 			newLane = get_node("../LaneAssets/car_lane_divider").duplicate()
 			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+			roadWidth = newLane.width
 			
 			# Creating all the lanes
 			for laneNumber in totalNumberOfLanes / 2:
 				layerNumber = layerNumber + 1
 				newLane = get_node("../LaneAssets/car_lane").duplicate()
 				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-				roadWidth = roadWidth + (newLane.width - roadWidth)
+				roadWidth = newLane.width
 				
 		elif totalNumberOfLanes % 2 == 1: # If the number of lanes is odd
 			# Creating the middle lane
 			newLane = get_node("../LaneAssets/car_lane").duplicate()
 			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-			roadWidth = roadWidth + (newLane.width - roadWidth)
+			roadWidth = newLane.width
 			
 			# Creating all the lanes
 			for laneNumber in totalNumberOfLanes / 2:
 				layerNumber = layerNumber + 1
 				newLane = get_node("../LaneAssets/car_lane_divider").duplicate()
 				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-				roadWidth = roadWidth + (newLane.width - roadWidth)
+				roadWidth = newLane.width
 				
 				layerNumber = layerNumber + 1
 				newLane = get_node("../LaneAssets/car_lane").duplicate()
 				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-				roadWidth = roadWidth + (newLane.width - roadWidth)
+				roadWidth = newLane.width
+		
+		# Creating the Bikelanes if needed
+		if newRoad.get_meta("bikeLane"):
+			layerNumber = layerNumber + 1
+			newLane = get_node("../LaneAssets/bike_lane").duplicate()
+			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+			roadWidth = newLane.width
 				
 		# Creating the pavement
+		layerNumber = layerNumber + 1
 		newLane = get_node("../LaneAssets/pavement").duplicate()
 		laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-		roadWidth = roadWidth + (newLane.width - roadWidth)
+		roadWidth = newLane.width
 		
 		# Setting the width of the road
 		newRoad.set_meta("roadWidth", roadWidth)
@@ -208,7 +217,7 @@ func _ready() -> void:
 		buildingsNode.add_child(newBuilding)
 		
 	# Removing the imported data node as it is no longer needed
-	#ImportedData.queue_free()
+	# ImportedData.queue_free()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()
@@ -232,7 +241,9 @@ func laneLineConstructorEven(newRoad : Node2D, laneBeingConstructed : Line2D, la
 	
 	# Sorting out the width of the line and Zindex
 	if layerNumber != 0:
+		print(str(roadWidth) + " + " + str(laneWidth) + " * 2")
 		laneBeingConstructed.width = roadWidth + laneWidth * 2
+		print(str(laneBeingConstructed.width))
 		laneBeingConstructed.z_index = laneBeingConstructed.z_index - layerNumber
 	
 	if isBridge == true:

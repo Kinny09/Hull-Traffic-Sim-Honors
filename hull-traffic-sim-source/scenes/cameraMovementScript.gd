@@ -19,4 +19,4 @@ func _unhandled_input(event):
 			zoom += Vector2(0.1, 0.1)
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			zoom -= Vector2(0.1, 0.1)
-	zoom = zoom.clamp(Vector2(0.2, 0.2), Vector2(5.0, 5.0))
+	zoom = zoom.clamp(Vector2(0.2, 0.2), Vector2(11.0, 11.0))
