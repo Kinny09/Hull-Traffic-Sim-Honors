@@ -3,7 +3,45 @@ extends Node
 @onready var ImportedData = $"../ImportedData"
 @onready var ClickingDetection = $"../ClickingDetection"
 
-var roadNodes = {}
+var roadNodes: Dictionary = {}
+var roadWays: Dictionary = {}
+var buildingWays: Dictionary = {}
+var roadInfoDictionary: Dictionary[String, Variant] = {
+	"speedLimit": 60,
+	"nodes": [],
+	"oneWay": false,
+	"bridge": false,
+	"lit": false,
+	"trafficCalming": false,
+	"pavement": false,
+	"bikeLane": false,
+	"busLane": false,
+	"name": "",
+	"id": 0,
+	"roadWidth": 0,
+	"lanes": 2
+}
+var placeInfoDictionary: Dictionary[String, Variant] = {
+	"buildingType": "",
+	"buildingID": 0,
+	"nodes": []
+}
+#var residentialInfoDictionary: Dictionary[String, Variant] = {
+	#"buildingType": "",
+	#"buildingID": 0,
+	#"nodes": [],
+	#"accessRoad": 0,
+	#"numberOfResidents": 0,
+	#"workplaces": []
+#}
+#var workplaceInfoDictionary: Dictionary[String, Variant] = {
+	#"buildingType": "",
+	#"buildingID": 0,
+	#"nodes": [],
+	#"accessRoad": 0,
+	#"employmentCapacity": 0,
+	#"numberOfEmployees": 0
+#}
 var globalRoadPosition = Vector2(0,0)
 
 func _ready() -> void:
@@ -16,14 +54,19 @@ func _ready() -> void:
 	roadNodes = ImportedData.roadNodeData.duplicate(true)
 	
 	for way in ImportedData.roadWaysData.values():
+		# Setting the ways ID variable
+		var wayID: String = str(way["id"])
+		
 		# Creating the new road asset node
 		var newRoad = get_node("../LaneAssets/road").duplicate()
-		newRoad.name = str(way["id"])
+		newRoad.name = wayID
 		
 		# Setting the tags that need to always be changed from their defaults
-		newRoad.set_meta("name", str(way["id"]))
-		newRoad.set_meta("id", str(way["id"]))
-		newRoad.set_meta("nodes", way["nodes"])
+		var newRoadInfoDictionary: Dictionary = roadInfoDictionary.duplicate(true)
+		roadWays[wayID] = newRoadInfoDictionary
+		newRoadInfoDictionary["name"] = wayID
+		newRoadInfoDictionary["id"] = wayID
+		newRoadInfoDictionary["nodes"] = way["nodes"]
 		
 		# Sorting the roads tags
 		var roadTags = way["tags"]
@@ -31,46 +74,46 @@ func _ready() -> void:
 		for tagName in way["tags"]:
 			match tagName:
 				"name":
-					newRoad.set_meta("name", roadTags["name"])
+					newRoadInfoDictionary["name"] = roadTags["name"]
 				"maxspeed":
 					var speed = roadTags["maxspeed"]
 					speed = int(speed.get_slice(" ", 0))
-					newRoad.set_meta("speedLimit", speed)
+					newRoadInfoDictionary["speedLimit"] = speed
 					
 				"lanes":
-					newRoad.set_meta("lanes", int(roadTags[tagName]))
+					newRoadInfoDictionary["lanes"] = int(roadTags[tagName])
 					
 				"oneway":
-					newRoad.set_meta("oneWay", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["oneWay"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
 				"bridge":
-					newRoad.set_meta("bridge", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["bridge"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
 				"lit":
-					newRoad.set_meta("lit", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["lit"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
 				"traffic_calming":
-					newRoad.set_meta("trafficCalming", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["trafficCalming"] = figureOutBoolValueForMetaData(roadTags[tagName])
 				
-				"sidewalk", "sidewalk:left", "sidewalk:right" when newRoad.get_meta("pavement") == false:
-					newRoad.set_meta("pavement", figureOutBoolValueForMetaData(roadTags[tagName]))
+				"sidewalk", "sidewalk:left", "sidewalk:right" when roadWays[wayID]["pavement"] == false:
+					newRoadInfoDictionary["pavement"] = figureOutBoolValueForMetaData(roadTags[tagName])
 						
-				"cycleway", "cycleway:both", "cycleway:right", "cycleway:left" when newRoad.get_meta("bikeLane") == false:
-					newRoad.set_meta("bikeLane", figureOutBoolValueForMetaData(roadTags[tagName]))
+				"cycleway", "cycleway:both", "cycleway:right", "cycleway:left" when roadWays[wayID]["bikeLane"] == false:
+					newRoadInfoDictionary["bikeLane"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
-				"busway" when newRoad.get_meta("busLane") == false:
-					newRoad.set_meta("busLane", figureOutBoolValueForMetaData(roadTags[tagName]))
+				"busway" when roadWays[wayID]["busLane"] == false:
+					newRoadInfoDictionary["busLane"] = figureOutBoolValueForMetaData(roadTags[tagName])
 		
 		# Moving the road to a place near it's real position
 		var randomNode = roadNodes[way["nodes"][0]]
 		globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
 		newRoad.set_global_position(globalRoadPosition)
-			
+		
 		# Drawing the road
-		var totalNumberOfLanes = newRoad.get_meta("lanes")
-		var roadWidth = 0 
+		var totalNumberOfLanes = roadWays[wayID]["lanes"]
+		var roadWidth = 0
 		var layerNumber = 0
-		var isBridge = newRoad.get_meta("bridge")
+		var isBridge = roadWays[wayID]["bridge"]
 		var newLane = null
 		
 		if totalNumberOfLanes % 2 == 0: # If the number of lanes is even
@@ -105,7 +148,7 @@ func _ready() -> void:
 				roadWidth = newLane.width
 		
 		# Creating the Bikelanes if needed
-		if newRoad.get_meta("bikeLane"):
+		if roadWays[wayID]["bikeLane"]:
 			layerNumber = layerNumber + 1
 			newLane = get_node("../LaneAssets/bike_lane").duplicate()
 			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
@@ -118,7 +161,7 @@ func _ready() -> void:
 		roadWidth = newLane.width
 		
 		# Setting the width of the road
-		newRoad.set_meta("roadWidth", roadWidth)
+		newRoadInfoDictionary["roadWidth"] = roadWidth
 		
 		# Adding the road to the roads node		
 		add_child(newRoad)	
@@ -151,7 +194,7 @@ func _ready() -> void:
 		# Finding nodes that are adjacent to each other and documenting that
 		for nodeIndex in listOfNodesInWay.size():
 			var nodeID = listOfNodesInWay[nodeIndex]
-			if nodeIndex - 1 >= 0 and not newRoad.get_meta("oneWay"):
+			if nodeIndex - 1 >= 0 and not roadWays[wayID]["oneWay"]:
 				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex - 1])
 			
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
@@ -206,14 +249,16 @@ func _ready() -> void:
 		
 		# Setting non-building specific meta data
 		newBuilding.name = str(buildingCount)
-		newBuilding.set_meta("buildingID", buildingCount)
-		newBuilding.set_meta("buildingType", buildingType)
-		newBuilding.set_meta("nodes", buildingWay["nodes"])
+		var placeInfo: Dictionary = placeInfoDictionary.duplicate(true)
+		placeInfo["buildingID"] = str(buildingCount)
+		placeInfo["buildingType"] = buildingType
+		placeInfo["nodes"] = buildingWay["nodes"]
 		
 		# Making the building visible
 		newBuilding.visible = true
 		
 		# Adding buildings to the building node
+		buildingWays[str(buildingCount)] = placeInfo
 		buildingsNode.add_child(newBuilding)
 		
 	# Removing the imported data node as it is no longer needed
@@ -241,9 +286,7 @@ func laneLineConstructorEven(newRoad : Node2D, laneBeingConstructed : Line2D, la
 	
 	# Sorting out the width of the line and Zindex
 	if layerNumber != 0:
-		print(str(roadWidth) + " + " + str(laneWidth) + " * 2")
 		laneBeingConstructed.width = roadWidth + laneWidth * 2
-		print(str(laneBeingConstructed.width))
 		laneBeingConstructed.z_index = laneBeingConstructed.z_index - layerNumber
 	
 	if isBridge == true:

@@ -80,19 +80,6 @@ width = 0.1
 default_color = Color(0.9297146, 0.9297147, 0.9297146, 1)
 
 [node name="road" type="Node2D" parent="LaneAssets"]
-metadata/speedLimit = 60
-metadata/nodes = []
-metadata/lanes = 2
-metadata/oneWay = false
-metadata/bridge = false
-metadata/lit = false
-metadata/trafficCalming = false
-metadata/pavement = false
-metadata/bikeLane = false
-metadata/busLane = false
-metadata/name = ""
-metadata/id = ""
-metadata/roadWidth = 0
 
 [node name="BuildingAssets" type="Node" parent="."]
 
