@@ -19,29 +19,33 @@ var roadInfoDictionary: Dictionary[String, Variant] = {
 	"name": "",
 	"id": 0,
 	"roadWidth": 0,
-	"lanes": 2
+	"lanes": 2,
+	"globalPosition": Vector2(0,0)
 }
 var placeInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
 	"buildingID": 0,
-	"nodes": []
+	"nodes": [],
+	"globalPosition": Vector2(0,0)
 }
-#var residentialInfoDictionary: Dictionary[String, Variant] = {
-	#"buildingType": "",
-	#"buildingID": 0,
-	#"nodes": [],
-	#"accessRoad": 0,
-	#"numberOfResidents": 0,
-	#"workplaces": []
-#}
-#var workplaceInfoDictionary: Dictionary[String, Variant] = {
-	#"buildingType": "",
-	#"buildingID": 0,
-	#"nodes": [],
-	#"accessRoad": 0,
-	#"employmentCapacity": 0,
-	#"numberOfEmployees": 0
-#}
+var residentialInfoDictionary: Dictionary[String, Variant] = {
+	"buildingType": "",
+	"buildingID": 0,
+	"nodes": [],
+	"accessRoad": 0,
+	"numberOfResidents": 0,
+	"workplaces": [],
+	"globalPosition": Vector2(0,0)
+}
+var workplaceInfoDictionary: Dictionary[String, Variant] = {
+	"buildingType": "",
+	"buildingID": 0,
+	"nodes": [],
+	"accessRoad": 0,
+	"employmentCapacity": 0,
+	"numberOfEmployees": 0,
+	"globalPosition": Vector2(0,0)
+}
 var globalRoadPosition = Vector2(0,0)
 
 func _ready() -> void:
@@ -108,6 +112,7 @@ func _ready() -> void:
 		var randomNode = roadNodes[way["nodes"][0]]
 		globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
 		newRoad.set_global_position(globalRoadPosition)
+		newRoadInfoDictionary["globalPosition"] = globalRoadPosition
 		
 		# Drawing the road
 		var totalNumberOfLanes = roadWays[wayID]["lanes"]
@@ -205,6 +210,7 @@ func _ready() -> void:
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	var buildingCount = 0
 	var buildingsNode = $"../Buildings"
+	var placeInfo = null;
 
 	for buildingWay in ImportedData.buildingWaysData.values():
 		# Declaring Important Variables
@@ -216,10 +222,13 @@ func _ready() -> void:
 		match buildingType:
 			"house", "apartments", "dormitory":
 				newBuilding = get_node("../BuildingAssets/residential").duplicate()
+				placeInfo = residentialInfoDictionary.duplicate(true)
 			"roof":
 				newBuilding = get_node("../BuildingAssets/place").duplicate()
+				placeInfo = placeInfoDictionary.duplicate(true)
 			_:
 				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
+				placeInfo = workplaceInfoDictionary.duplicate(true)
 				
 		# Moving the building to a place near it's real position
 		var randomBuildingNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
@@ -243,16 +252,25 @@ func _ready() -> void:
 		newClickZone.set_polygon(arrayOfVectors)
 		ClickingDetection.add_child(newClickZone)
 		
+		# Potentially edit this to be based of node position instead of road position. This would mean that nodes need to know what Ways their apart of.
 		# Finding the nearest road to set as the access road
-		#for roads in roadNode.get_children():
-			#pass
+		if buildingType != "roof":
+			var closestDistance: float = 1000000
+			for roadID in roadWays:
+				var placePosition: Vector2 = globalBuildingPosition
+				var roadPosition: Vector2 = roadWays[str(roadID)]["globalPosition"]
+				var distanceFound: float = placePosition.distance_squared_to(roadPosition)
+				
+				if distanceFound < closestDistance:
+					closestDistance = distanceFound
+					placeInfo["accessRoad"] = roadWays[str(roadID)]["id"]
 		
 		# Setting non-building specific meta data
 		newBuilding.name = str(buildingCount)
-		var placeInfo: Dictionary = placeInfoDictionary.duplicate(true)
 		placeInfo["buildingID"] = str(buildingCount)
 		placeInfo["buildingType"] = buildingType
 		placeInfo["nodes"] = buildingWay["nodes"]
+		placeInfo["globalPosition"] = globalBuildingPosition
 		
 		# Making the building visible
 		newBuilding.visible = true
@@ -262,7 +280,7 @@ func _ready() -> void:
 		buildingsNode.add_child(newBuilding)
 		
 	# Removing the imported data node as it is no longer needed
-	# ImportedData.queue_free()
+	ImportedData.queue_free()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()
