@@ -3,6 +3,9 @@ extends Node
 @onready var ImportedData = $"../ImportedData"
 @onready var ClickingDetection = $"../ClickingDetection"
 
+## Signal to tell the simulation when all the assets have been constructed
+signal ASSETS_CONSTRUCTED()
+
 var roadNodes: Dictionary = {}
 var roadWays: Dictionary = {}
 var buildingWays: Dictionary = {}
@@ -79,6 +82,7 @@ func _ready() -> void:
 			match tagName:
 				"name":
 					newRoadInfoDictionary["name"] = roadTags["name"]
+					
 				"maxspeed":
 					var speed = roadTags["maxspeed"]
 					speed = int(speed.get_slice(" ", 0))
@@ -281,6 +285,9 @@ func _ready() -> void:
 		
 	# Removing the imported data node as it is no longer needed
 	ImportedData.queue_free()
+	
+	# Telling the rest of the simulation the asset constructing is done
+	ASSETS_CONSTRUCTED.emit()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()
