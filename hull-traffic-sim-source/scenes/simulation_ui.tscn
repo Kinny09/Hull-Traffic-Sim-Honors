@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://cg6ndwf2gjjop"]
+
+[ext_resource type="Script" uid="uid://d87vurja0aoo" path="res://Scenes/popupMenuControllerScript.gd" id="1_wmj72"]
+
+[node name="SimulationUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PopupMenu" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -202.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="PopupMenuController" type="Control" parent="PopupMenu"]
+layout_mode = 2
+script = ExtResource("1_wmj72")
+
+[node name="SelectionInfoBox" type="MarginContainer" parent="PopupMenu"]
+layout_mode = 2
+
+[node name="Background" type="Panel" parent="PopupMenu/SelectionInfoBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PopupMenu/SelectionInfoBox/Background"]
+layout_mode = 0
+offset_right = 202.0
+offset_bottom = 49.0
+text = "Selected Object Info
+"
+
+[node name="Items" type="VBoxContainer" parent="PopupMenu/SelectionInfoBox/Background"]
+custom_minimum_size = Vector2(0, 610)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0

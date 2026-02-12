@@ -1,8 +1,54 @@
 extends Node
 
 @onready var ImportedData = $"../ImportedData"
+@onready var ClickingDetection = $"../ClickingDetection"
 
-var roadNodes = {}
+## Signal to tell the simulation when all the assets have been constructed
+signal ASSETS_CONSTRUCTED()
+
+var roadNodes: Dictionary = {}
+var roadWays: Dictionary = {}
+var buildingWays: Dictionary = {}
+var roadInfoDictionary: Dictionary[String, Variant] = {
+	"speedLimit": 60,
+	"nodes": [],
+	"oneWay": false,
+	"bridge": false,
+	"lit": false,
+	"trafficCalming": false,
+	"pavement": false,
+	"bikeLane": false,
+	"busLane": false,
+	"name": "",
+	"id": 0,
+	"roadWidth": 0,
+	"lanes": 2,
+	"globalPosition": Vector2(0,0)
+}
+var placeInfoDictionary: Dictionary[String, Variant] = {
+	"buildingType": "",
+	"buildingID": 0,
+	"nodes": [],
+	"globalPosition": Vector2(0,0)
+}
+var residentialInfoDictionary: Dictionary[String, Variant] = {
+	"buildingType": "",
+	"buildingID": 0,
+	"nodes": [],
+	"accessRoad": 0,
+	"numberOfResidents": 0,
+	"workplaces": {},
+	"globalPosition": Vector2(0,0)
+}
+var workplaceInfoDictionary: Dictionary[String, Variant] = {
+	"buildingType": "",
+	"buildingID": 0,
+	"nodes": [],
+	"accessRoad": 0,
+	"employmentCapacity": 0,
+	"numberOfEmployees": 0,
+	"globalPosition": Vector2(0,0)
+}
 var globalRoadPosition = Vector2(0,0)
 
 func _ready() -> void:
@@ -15,13 +61,19 @@ func _ready() -> void:
 	roadNodes = ImportedData.roadNodeData.duplicate(true)
 	
 	for way in ImportedData.roadWaysData.values():
+		# Setting the ways ID variable
+		var wayID: String = str(way["id"])
+		
 		# Creating the new road asset node
 		var newRoad = get_node("../LaneAssets/road").duplicate()
-		newRoad.name = str(way["id"])
+		newRoad.name = wayID
 		
 		# Setting the tags that need to always be changed from their defaults
-		newRoad.set_meta("name", str(way["id"]))
-		newRoad.set_meta("nodes", way["nodes"])
+		var newRoadInfoDictionary: Dictionary = roadInfoDictionary.duplicate(true)
+		roadWays[wayID] = newRoadInfoDictionary
+		newRoadInfoDictionary["name"] = wayID
+		newRoadInfoDictionary["id"] = wayID
+		newRoadInfoDictionary["nodes"] = way["nodes"]
 		
 		# Sorting the roads tags
 		var roadTags = way["tags"]
@@ -29,92 +81,129 @@ func _ready() -> void:
 		for tagName in way["tags"]:
 			match tagName:
 				"name":
-					newRoad.set_meta("name", roadTags["name"])
+					newRoadInfoDictionary["name"] = roadTags["name"]
+					
 				"maxspeed":
 					var speed = roadTags["maxspeed"]
 					speed = int(speed.get_slice(" ", 0))
-					newRoad.set_meta("speedLimit", speed)
+					newRoadInfoDictionary["speedLimit"] = speed
 					
 				"lanes":
-					newRoad.set_meta("lanes", int(roadTags[tagName]))
+					newRoadInfoDictionary["lanes"] = int(roadTags[tagName])
 					
 				"oneway":
-					newRoad.set_meta("oneWay", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["oneWay"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
 				"bridge":
-					newRoad.set_meta("bridge", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["bridge"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
 				"lit":
-					newRoad.set_meta("lit", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["lit"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
 				"traffic_calming":
-					newRoad.set_meta("trafficCalming", figureOutBoolValueForMetaData(roadTags[tagName]))
+					newRoadInfoDictionary["trafficCalming"] = figureOutBoolValueForMetaData(roadTags[tagName])
 				
-				"sidewalk", "sidewalk:left", "sidewalk:right" when newRoad.get_meta("pavement") == false:
-					newRoad.set_meta("pavement", figureOutBoolValueForMetaData(roadTags[tagName]))
+				"sidewalk", "sidewalk:left", "sidewalk:right" when roadWays[wayID]["pavement"] == false:
+					newRoadInfoDictionary["pavement"] = figureOutBoolValueForMetaData(roadTags[tagName])
 						
-				"cycleway", "cycleway:both", "cycleway:right", "cycleway:left" when newRoad.get_meta("bikeLane") == false:
-					newRoad.set_meta("bikeLane", figureOutBoolValueForMetaData(roadTags[tagName]))
+				"cycleway", "cycleway:both", "cycleway:right", "cycleway:left" when roadWays[wayID]["bikeLane"] == false:
+					newRoadInfoDictionary["bikeLane"] = figureOutBoolValueForMetaData(roadTags[tagName])
 					
-				"busway" when newRoad.get_meta("busLane") == false:
-					newRoad.set_meta("busLane", figureOutBoolValueForMetaData(roadTags[tagName]))
+				"busway" when roadWays[wayID]["busLane"] == false:
+					newRoadInfoDictionary["busLane"] = figureOutBoolValueForMetaData(roadTags[tagName])
 		
 		# Moving the road to a place near it's real position
 		var randomNode = roadNodes[way["nodes"][0]]
 		globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
 		newRoad.set_global_position(globalRoadPosition)
-			
+		newRoadInfoDictionary["globalPosition"] = globalRoadPosition
+		
 		# Drawing the road
-		var totalNumberOfLanes = newRoad.get_meta("lanes")
-		var roadWidth = 0 
+		var totalNumberOfLanes = roadWays[wayID]["lanes"]
+		var roadWidth = 0
 		var layerNumber = 0
-		var isBridge = newRoad.get_meta("bridge")
+		var isBridge = roadWays[wayID]["bridge"]
 		var newLane = null
 		
 		if totalNumberOfLanes % 2 == 0: # If the number of lanes is even
 			# Creating the lane divider
 			newLane = get_node("../LaneAssets/car_lane_divider").duplicate()
 			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+			roadWidth = newLane.width
 			
 			# Creating all the lanes
 			for laneNumber in totalNumberOfLanes / 2:
 				layerNumber = layerNumber + 1
 				newLane = get_node("../LaneAssets/car_lane").duplicate()
 				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-				roadWidth = roadWidth + (newLane.width - roadWidth)
+				roadWidth = newLane.width
 				
 		elif totalNumberOfLanes % 2 == 1: # If the number of lanes is odd
 			# Creating the middle lane
 			newLane = get_node("../LaneAssets/car_lane").duplicate()
 			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-			roadWidth = roadWidth + (newLane.width - roadWidth)
+			roadWidth = newLane.width
 			
 			# Creating all the lanes
 			for laneNumber in totalNumberOfLanes / 2:
 				layerNumber = layerNumber + 1
 				newLane = get_node("../LaneAssets/car_lane_divider").duplicate()
 				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-				roadWidth = roadWidth + (newLane.width - roadWidth)
+				roadWidth = newLane.width
 				
 				layerNumber = layerNumber + 1
 				newLane = get_node("../LaneAssets/car_lane").duplicate()
 				laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-				roadWidth = roadWidth + (newLane.width - roadWidth)
+				roadWidth = newLane.width
+		
+		# Creating the Bikelanes if needed
+		if roadWays[wayID]["bikeLane"]:
+			layerNumber = layerNumber + 1
+			newLane = get_node("../LaneAssets/bike_lane").duplicate()
+			laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
+			roadWidth = newLane.width
 				
 		# Creating the pavement
+		layerNumber = layerNumber + 1
 		newLane = get_node("../LaneAssets/pavement").duplicate()
 		laneLineConstructorEven(newRoad, newLane, layerNumber, roadWidth, way["nodes"], isBridge)
-		roadWidth = roadWidth + (newLane.width - roadWidth)
-			
+		roadWidth = newLane.width
+		
+		# Setting the width of the road
+		newRoadInfoDictionary["roadWidth"] = roadWidth
+		
 		# Adding the road to the roads node		
 		add_child(newRoad)	
 		
-		# Adding adjacent nodes to the nodes list
+		# Adding way nodes to the nodes list
 		var listOfNodesInWay = way["nodes"]
 		
+		# Creating the click detectors for the roads
+		var clickSegmentCount = 0
+		
+		for nodeIndex in listOfNodesInWay.size():
+			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
+				var newClickSegment = CollisionShape2D.new()
+				var currentNode = roadNodes[listOfNodesInWay[nodeIndex]]
+				var nodeAhead = roadNodes[listOfNodesInWay[nodeIndex + 1]]
+				
+				var currentNodeVector = Vector2(currentNode["X"], currentNode["Y"])
+				var nodeAheadVector =  Vector2(nodeAhead["X"], nodeAhead["Y"])
+				
+				newClickSegment.shape = RectangleShape2D.new()
+				newClickSegment.name = "Roads|"+ str(clickSegmentCount) + "|" + str(newRoad.name)
+				newClickSegment.set_global_position((currentNodeVector + nodeAheadVector) / 2)
+				clickSegmentCount = clickSegmentCount + 1
+				
+				newClickSegment.shape.size = Vector2(currentNodeVector.distance_to(nodeAheadVector), roadWidth)
+				newClickSegment.rotation = (currentNodeVector.angle_to_point(nodeAheadVector))
+				
+				ClickingDetection.add_child(newClickSegment)
+		
+		# Finding nodes that are adjacent to each other and documenting that
 		for nodeIndex in listOfNodesInWay.size():
 			var nodeID = listOfNodesInWay[nodeIndex]
-			if nodeIndex - 1 >= 0 and not newRoad.get_meta("oneWay"):
+			if nodeIndex - 1 >= 0 and not roadWays[wayID]["oneWay"]:
 				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex - 1])
 			
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
@@ -125,6 +214,7 @@ func _ready() -> void:
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	var buildingCount = 0
 	var buildingsNode = $"../Buildings"
+	var placeInfo = null;
 
 	for buildingWay in ImportedData.buildingWaysData.values():
 		# Declaring Important Variables
@@ -136,15 +226,24 @@ func _ready() -> void:
 		match buildingType:
 			"house", "apartments", "dormitory":
 				newBuilding = get_node("../BuildingAssets/residential").duplicate()
+				placeInfo = residentialInfoDictionary.duplicate(true)
 			"roof":
 				newBuilding = get_node("../BuildingAssets/place").duplicate()
+				placeInfo = placeInfoDictionary.duplicate(true)
 			_:
 				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
+				placeInfo = workplaceInfoDictionary.duplicate(true)
 				
 		# Moving the building to a place near it's real position
 		var randomBuildingNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
 		var globalBuildingPosition = Vector2(randomBuildingNode["X"], randomBuildingNode["Y"])
 		newBuilding.set_global_position(globalBuildingPosition)
+		
+		# Creating the click detection zone for the building
+		var newClickZone = CollisionPolygon2D.new()
+		newClickZone.name = "Buildings|" + str(buildingCount)
+		newClickZone.set_global_position(globalBuildingPosition)
+		newClickZone.z_index = 50
 		
 		# Drawing the buildings shape
 		var buildingShape = newBuilding.get_node("shape")
@@ -154,25 +253,41 @@ func _ready() -> void:
 			var currentVector = Vector2(node.X, node.Y) - globalBuildingPosition
 			arrayOfVectors.append(currentVector)
 		buildingShape.set_polygon(arrayOfVectors)
+		newClickZone.set_polygon(arrayOfVectors)
+		ClickingDetection.add_child(newClickZone)
 		
+		# Potentially edit this to be based of node position instead of road position. This would mean that nodes need to know what Ways their apart of.
 		# Finding the nearest road to set as the access road
-		#for roads in roadNode.get_children():
-			#pass
+		if buildingType != "roof":
+			var closestDistance: float = 1000000
+			for roadID in roadWays:
+				var placePosition: Vector2 = globalBuildingPosition
+				var roadPosition: Vector2 = roadWays[str(roadID)]["globalPosition"]
+				var distanceFound: float = placePosition.distance_squared_to(roadPosition)
+				
+				if distanceFound < closestDistance:
+					closestDistance = distanceFound
+					placeInfo["accessRoad"] = roadWays[str(roadID)]["id"]
 		
 		# Setting non-building specific meta data
 		newBuilding.name = str(buildingCount)
-		newBuilding.set_meta("buildingID", buildingCount)
-		newBuilding.set_meta("buildingType", buildingType)
-		newBuilding.set_meta("nodes", buildingWay["nodes"])
+		placeInfo["buildingID"] = str(buildingCount)
+		placeInfo["buildingType"] = buildingType
+		placeInfo["nodes"] = buildingWay["nodes"]
+		placeInfo["globalPosition"] = globalBuildingPosition
 		
 		# Making the building visible
 		newBuilding.visible = true
 		
 		# Adding buildings to the building node
+		buildingWays[str(buildingCount)] = placeInfo
 		buildingsNode.add_child(newBuilding)
 		
 	# Removing the imported data node as it is no longer needed
-	#ImportedData.queue_free()
+	ImportedData.queue_free()
+	
+	# Telling the rest of the simulation the asset constructing is done
+	ASSETS_CONSTRUCTED.emit()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()

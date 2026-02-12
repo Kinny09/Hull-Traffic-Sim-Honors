@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dwl0im38iqcjv"]
+[gd_scene load_steps=9 format=3 uid="uid://dwl0im38iqcjv"]
 
 [ext_resource type="Script" uid="uid://l2eeeqvrge33" path="res://Scenes/HTTPRequestScript.gd" id="1_3p1jw"]
 [ext_resource type="Script" uid="uid://d1c7oo7tknvjn" path="res://Scenes/debuggingToolsScript.gd" id="1_83pfb"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://c3xj35jq7w1ly" path="res://Scenes/assetConstructorScript.gd" id="1_y5vwh"]
 [ext_resource type="Script" uid="uid://ckuppgvjeohtv" path="res://Scenes/cameraMovementScript.gd" id="4_ypxof"]
 [ext_resource type="Script" uid="uid://cd6wuqsdkcewn" path="res://Scenes/clickDetectorScript.gd" id="5_83pfb"]
-[ext_resource type="Script" uid="uid://xhxhrm2gb0q1" path="res://Scenes/setupPopulationAndJobsScript.gd" id="6_c8cjm"]
 [ext_resource type="Script" uid="uid://btspsj0ytcytu" path="res://Scenes/selections.gd" id="6_gfe5q"]
 [ext_resource type="PackedScene" uid="uid://cg6ndwf2gjjop" path="res://Scenes/simulation_ui.tscn" id="7_v0ioj"]
 
@@ -38,9 +37,6 @@ script = ExtResource("4_ypxof")
 script = ExtResource("1_y5vwh")
 
 [node name="Buildings" type="Node" parent="."]
-script = ExtResource("6_c8cjm")
-metadata/totalPopulation = 12000
-metadata/totalJobs = 17000
 
 [node name="Middle" type="Polygon2D" parent="."]
 color = Color(1, 0.13333334, 1, 1)
@@ -50,40 +46,53 @@ polygon = PackedVector2Array(2, -2, -2, -2, -2, 2, 2, 2)
 
 [node name="pavement" type="Line2D" parent="LaneAssets"]
 visible = false
-z_index = 10
+z_index = 8
 points = PackedVector2Array(0, -2, 0, 2)
-width = 0.5
+width = 1.0
 default_color = Color(0.6255971, 0.6255971, 0.6255971, 1)
 
 [node name="car_lane" type="Line2D" parent="LaneAssets"]
 visible = false
 z_index = 10
 points = PackedVector2Array(0, -2, 0, 2)
-width = 1.0
+width = 2.0
 default_color = Color(0.12955844, 0.12955847, 0.12955844, 1)
 
 [node name="bus_lane" type="Line2D" parent="LaneAssets"]
 visible = false
 z_index = 10
 points = PackedVector2Array(0, -2, 0, 2)
-width = 1.0
+width = 2.0
 default_color = Color(0.6077038, 0.31219974, 0.14933625, 1)
 
 [node name="bike_lane" type="Line2D" parent="LaneAssets"]
 visible = false
 z_index = 10
 points = PackedVector2Array(0, -2, 0, 2)
-width = 0.5
+width = 1.0
 default_color = Color(2.2862106e-07, 0.31196934, 0.2024343, 1)
 
 [node name="car_lane_divider" type="Line2D" parent="LaneAssets"]
 visible = false
 z_index = 10
 points = PackedVector2Array(0, -2, 0, 2)
-width = 0.1
+width = 0.2
 default_color = Color(0.9297146, 0.9297147, 0.9297146, 1)
 
 [node name="road" type="Node2D" parent="LaneAssets"]
+metadata/speedLimit = 60
+metadata/nodes = []
+metadata/lanes = 2
+metadata/oneWay = false
+metadata/bridge = false
+metadata/lit = false
+metadata/trafficCalming = false
+metadata/pavement = false
+metadata/bikeLane = false
+metadata/busLane = false
+metadata/name = ""
+metadata/id = ""
+metadata/roadWidth = 0
 
 [node name="BuildingAssets" type="Node" parent="."]
 
