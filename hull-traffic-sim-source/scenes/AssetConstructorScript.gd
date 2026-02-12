@@ -37,7 +37,7 @@ var residentialInfoDictionary: Dictionary[String, Variant] = {
 	"nodes": [],
 	"accessRoad": 0,
 	"numberOfResidents": 0,
-	"workplaces": [],
+	"workplaces": {},
 	"globalPosition": Vector2(0,0)
 }
 var workplaceInfoDictionary: Dictionary[String, Variant] = {

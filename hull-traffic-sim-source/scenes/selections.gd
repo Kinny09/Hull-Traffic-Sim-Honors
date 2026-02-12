@@ -35,6 +35,16 @@ func itemClicked(selectedItemID):
 			accessRoadSelectionShape.position = accessRoadOrigonalNodePosition
 			add_child(accessRoadSelectionShape)
 		
+		## Creating and showing the workplaces a residence works at when their selected
+		if buildingWaysDictionary[itemID]["buildingType"] in ["house", "apartments", "dormitory"]:
+			for workplaceID in buildingWaysDictionary[itemID]["workplaces"]:
+				var workplacePosition = get_node("../Buildings/" +  workplaceID).position
+				var workplaceSelectionShape = get_node("../Buildings/" +  workplaceID + "/shape").duplicate()
+				workplaceSelectionShape.color = Color(0.3, 0, 0.2, 0.9)
+				workplaceSelectionShape.z_index = selectionShape.z_index + 10
+				workplaceSelectionShape.position = workplacePosition
+				add_child(workplaceSelectionShape)
+		
 	elif splitString[0] == "Roads":
 		itemID = splitString[2]
 		origonalNodePosition = get_node("../Roads/" +  itemID).position
