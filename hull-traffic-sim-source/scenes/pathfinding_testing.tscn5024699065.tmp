@@ -1,0 +1,135 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2oeykliqa384"]
+
+[ext_resource type="Script" uid="uid://c6kkybqxeb0w" path="res://Scenes/roadInitalizationScript.gd" id="1_4h6o8"]
+
+[node name="PathfindingTesting" type="Node2D"]
+
+[node name="Roads" type="Node" parent="."]
+script = ExtResource("1_4h6o8")
+
+[node name="UninitializedNodes" type="Node" parent="."]
+
+[node name="1" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(-31, 5)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="2" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(-14, -11)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="7" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(-11, 15)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="8" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(12, 18)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="9" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(25, -14)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="5" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(-11, 5)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="3" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(4, -15)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="6" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(9, 3)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="4" type="Polygon2D" parent="UninitializedNodes"]
+position = Vector2(32, 2)
+color = Color(0.10096202, 0.10329311, 0.17378324, 1)
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+
+[node name="UninitializedWays" type="Node" parent="."]
+
+[node name="1" type="Line2D" parent="UninitializedWays"]
+z_index = -1
+points = PackedVector2Array(-31, 5, -14, -11, 4, -15, 25, -14)
+width = 1.0
+default_color = Color(1.5883148e-06, 0.47820854, 0.4787565, 1)
+metadata/speedLimit = 30
+metadata/nodes = [1, 2, 3, 9]
+metadata/oneWay = false
+metadata/bridge = false
+metadata/lit = false
+metadata/trafficCalming = false
+metadata/lanes = 0
+
+[node name="2" type="Line2D" parent="UninitializedWays"]
+z_index = -1
+points = PackedVector2Array(25, -14, 32, 2)
+width = 1.0
+default_color = Color(0.32202017, 0.45854425, 0.3060822, 1)
+metadata/speedLimit = 30
+metadata/nodes = [9, 4]
+metadata/oneWay = false
+metadata/bridge = false
+metadata/lit = false
+metadata/trafficCalming = false
+metadata/lanes = 0
+
+[node name="3" type="Line2D" parent="UninitializedWays"]
+z_index = -1
+points = PackedVector2Array(4, -15, 9, 3, 12, 18)
+width = 1.0
+default_color = Color(0.48826557, 0.4074763, 0.18796837, 1)
+metadata/speedLimit = 30
+metadata/nodes = [3, 6, 8]
+metadata/oneWay = false
+metadata/bridge = false
+metadata/lit = false
+metadata/trafficCalming = false
+metadata/lanes = 0
+
+[node name="4" type="Line2D" parent="UninitializedWays"]
+z_index = -1
+points = PackedVector2Array(-31, 5, -11, 5)
+width = 1.0
+default_color = Color(0.41304976, 0.34968966, 0.7113606, 1)
+metadata/speedLimit = 30
+metadata/nodes = [1, 5]
+metadata/oneWay = false
+metadata/bridge = false
+metadata/lit = false
+metadata/trafficCalming = false
+metadata/lanes = 0
+
+[node name="5" type="Line2D" parent="UninitializedWays"]
+z_index = -1
+points = PackedVector2Array(-11, 5, 9, 3, 32, 2)
+width = 1.0
+default_color = Color(0.6446403, 0.30461898, 0.13015911, 1)
+metadata/speedLimit = 30
+metadata/nodes = [5, 6, 4]
+metadata/oneWay = false
+metadata/bridge = false
+metadata/lit = false
+metadata/trafficCalming = false
+metadata/lanes = 0
+
+[node name="6" type="Line2D" parent="UninitializedWays"]
+z_index = -1
+points = PackedVector2Array(-31, 5, -11, 15, 12, 18, 32, 2)
+width = 1.0
+default_color = Color(0.53091955, 0.6415787, 0.8019082, 1)
+metadata/speedLimit = 30
+metadata/nodes = [1, 7, 8, 4]
+metadata/oneWay = false
+metadata/bridge = false
+metadata/lit = false
+metadata/trafficCalming = false
+metadata/lanes = 0
