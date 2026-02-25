@@ -1,4 +1,4 @@
-## Defining the class name
+## A class that holds all the information for a specific origin-destination pair
 class_name ODPair extends RefCounted
 
 # Member Variables

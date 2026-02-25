@@ -172,3 +172,16 @@ polygon = PackedVector2Array(-39, 1, -37, 1, -37, 3, -39, 3)
 metadata/buildingType = "building"
 metadata/buildingID = 3
 metadata/accessNode = 4
+
+[node name="4" type="Polygon2D" parent="UninitalizedBuildings"]
+position = Vector2(26, 16)
+color = Color(0.55946136, 0.9960869, 0.64873475, 1)
+polygon = PackedVector2Array(-39, 1, -37, 1, -37, 3, -39, 3)
+metadata/buildingType = "house"
+metadata/buildingID = 4
+metadata/accessNode = 7
+metadata/numberOfResidents = 800
+metadata/workplaces = {
+"2": 400,
+"3": 300
+}
