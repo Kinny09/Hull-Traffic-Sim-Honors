@@ -1,13 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://c2oeykliqa384"]
+[gd_scene load_steps=5 format=3 uid="uid://c2oeykliqa384"]
 
 [ext_resource type="Script" uid="uid://c6kkybqxeb0w" path="res://Scenes/roadInitalizationScript.gd" id="1_4h6o8"]
 [ext_resource type="Script" uid="uid://do8oexu5u5e6q" path="res://Scenes/trafficSimulationScript.gd" id="1_a7a0b"]
+[ext_resource type="Script" uid="uid://xqsv1oslrle" path="res://Scenes/trafficHeatMapScript.gd" id="2_6aucf"]
 [ext_resource type="Script" uid="uid://sqllx66gyd1u" path="res://Scenes/buildingInitiliziationScript.gd" id="2_16shf"]
 
 [node name="PathfindingTesting" type="Node2D"]
 
 [node name="TrafficSimulation" type="Node" parent="."]
 script = ExtResource("1_a7a0b")
+
+[node name="TrafficHeatMap" type="Node" parent="TrafficSimulation"]
+script = ExtResource("2_6aucf")
 
 [node name="Roads" type="Node" parent="."]
 script = ExtResource("1_4h6o8")
@@ -18,46 +22,55 @@ script = ExtResource("2_16shf")
 [node name="UninitializedNodes" type="Node" parent="."]
 
 [node name="1" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(-31, 5)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="2" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(-14, -11)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="7" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(-11, 15)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="8" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(12, 18)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="9" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(25, -14)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="5" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(-11, 5)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="3" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(4, -15)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="6" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(9, 3)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
 
 [node name="4" type="Polygon2D" parent="UninitializedNodes"]
+z_index = 5
 position = Vector2(32, 2)
 color = Color(0.10096202, 0.10329311, 0.17378324, 1)
 polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)

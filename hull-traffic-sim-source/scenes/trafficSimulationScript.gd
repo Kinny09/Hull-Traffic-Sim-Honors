@@ -1,6 +1,6 @@
 extends Node
 
-## Getting the necessart nodes
+## Getting the necessary nodes
 @onready var Roads = $"../Roads"
 @onready var Buildings = $"../Buildings"
 
@@ -91,7 +91,7 @@ func a_star_pathfind(originDestinationPair: ODPair, factorInCongestion: bool = f
 			
 			if not neighbourNode in openList:
 				openList.append(neighbourNode)
-				openList.sort_custom(func(a, b): return a["totalCost"] > b["totalCost"])
+				openList.sort_custom(func(a, b): return a["totalCost"] < b["totalCost"])
 				
 			elif tentativeCost >= neighbourNode["totalCost"]:
 				continue
@@ -113,7 +113,8 @@ func reconstruct_a_star_path(currentNode: Dictionary) -> Array[Dictionary]:
 func add_congestion_to_ways(originDestinationPairToAddCongestionTo: ODPair) -> void:
 	for node in originDestinationPairToAddCongestionTo.routeNodes:
 		for parentWay in node["parentWay"]:
-			parentWay["congestion"] += originDestinationPairToAddCongestionTo.agentsUsing
+			var numberOfLanesOnOneSide = parentWay["lanes"] / 2
+			parentWay["congestion"] += originDestinationPairToAddCongestionTo.agentsUsing / numberOfLanesOnOneSide
 
 
 
