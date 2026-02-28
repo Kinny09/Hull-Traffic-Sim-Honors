@@ -121,26 +121,26 @@ z_index = -1
 points = PackedVector2Array(-31, 5, -11, 5)
 width = 1.0
 default_color = Color(0.41304976, 0.34968966, 0.7113606, 1)
-metadata/speedLimit = 30
+metadata/speedLimit = 60
 metadata/nodes = [1, 5]
 metadata/oneWay = false
 metadata/bridge = false
 metadata/lit = false
 metadata/trafficCalming = false
-metadata/lanes = 2
+metadata/lanes = 4
 
 [node name="5" type="Line2D" parent="UninitializedWays"]
 z_index = -1
 points = PackedVector2Array(-11, 5, 9, 3, 32, 2)
 width = 1.0
 default_color = Color(0.6446403, 0.30461898, 0.13015911, 1)
-metadata/speedLimit = 30
+metadata/speedLimit = 60
 metadata/nodes = [5, 6, 4]
 metadata/oneWay = false
 metadata/bridge = false
 metadata/lit = false
 metadata/trafficCalming = false
-metadata/lanes = 2
+metadata/lanes = 4
 
 [node name="6" type="Line2D" parent="UninitializedWays"]
 z_index = -1
@@ -158,7 +158,7 @@ metadata/lanes = 2
 [node name="UninitalizedBuildings" type="Node" parent="."]
 
 [node name="1" type="Polygon2D" parent="UninitalizedBuildings"]
-position = Vector2(4, 3)
+position = Vector2(5, 5)
 color = Color(0.55946136, 0.9960869, 0.64873475, 1)
 polygon = PackedVector2Array(-39, 1, -37, 1, -37, 3, -39, 3)
 metadata/buildingType = "house"
@@ -187,12 +187,12 @@ metadata/buildingID = 3
 metadata/accessNode = 4
 
 [node name="4" type="Polygon2D" parent="UninitalizedBuildings"]
-position = Vector2(26, 16)
+position = Vector2(5, 1)
 color = Color(0.55946136, 0.9960869, 0.64873475, 1)
 polygon = PackedVector2Array(-39, 1, -37, 1, -37, 3, -39, 3)
 metadata/buildingType = "house"
 metadata/buildingID = 4
-metadata/accessNode = 7
+metadata/accessNode = 1
 metadata/numberOfResidents = 800
 metadata/workplaces = {
 "2": 400,

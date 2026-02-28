@@ -28,7 +28,7 @@ func _ready() -> void:
 	
 	# Doing the inital pass through of ODPairs and figuring out where they go without factoring in congestion
 	for ODPairToPathFindFor in tableOfODPairs:
-		var pathFound: Array[Dictionary] = a_star_pathfind(ODPairToPathFindFor)
+		var pathFound: Array[Dictionary] = a_star_pathfind(ODPairToPathFindFor, true)
 		ODPairToPathFindFor.routeNodes = pathFound
 		add_congestion_to_ways(ODPairToPathFindFor)
 
@@ -82,10 +82,12 @@ func a_star_pathfind(originDestinationPair: ODPair, factorInCongestion: bool = f
 				neighbourNode["incrementalCost"] = parentWay["baseMove"] + congestion
 				neighbourNode["estimatedDistanceCost"] = neighbourNode["position"].distance_to(destination["position"])
 				neighbourNode["totalCost"] = neighbourNode["incrementalCost"] + neighbourNode["estimatedDistanceCost"]
+				#print(str(neighbourNode["totalCost"]) + " = " + str(parentWay["baseMove"]) + "+" + str(congestion) + "+" + str(neighbourNode["estimatedDistanceCost"]))
 			else:
-				neighbourNode["incrementalCost"] = 3 * numberOfParentWays
+				neighbourNode["incrementalCost"] = 3 * numberOfParentWays + congestion
 				neighbourNode["estimatedDistanceCost"] = neighbourNode["position"].distance_to(destination["position"])
 				neighbourNode["totalCost"] = neighbourNode["incrementalCost"] + neighbourNode["estimatedDistanceCost"]
+				#print(str(neighbourNode["totalCost"]) + " = " + str(3 * numberOfParentWays) + "+" + str(congestion) + "+" + str(neighbourNode["estimatedDistanceCost"]))
 			
 			var tentativeCost = currentNode["totalCost"] + neighbourNode["totalCost"]
 			
@@ -110,6 +112,7 @@ func reconstruct_a_star_path(currentNode: Dictionary) -> Array[Dictionary]:
 		
 	return path
 
+## Adds the congestion to the ways it travels on
 func add_congestion_to_ways(originDestinationPairToAddCongestionTo: ODPair) -> void:
 	for node in originDestinationPairToAddCongestionTo.routeNodes:
 		for parentWay in node["parentWay"]:
