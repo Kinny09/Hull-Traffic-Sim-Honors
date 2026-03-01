@@ -22,7 +22,7 @@ func _ready() -> void:
 	http_request.request_completed.connect(_on_request_completed)
 	
 	# For just the Uni and Area:
-	# way(53.76953,-0.38532,53.78109,-0.35163)
+	# way(53.75980,-0.39443,53.78318,-0.35470)
 	
 	# For all of Hull
 	# way(53.715000,-0.4836188,53.8109399,-0.2109668)
@@ -31,7 +31,7 @@ func _ready() -> void:
 	query = """
 		[out:json][timeout:50];
 		(
-			way(53.76953,-0.38532,53.78109,-0.35163)
+			way(53.75980,-0.39443,53.78318,-0.35470)
 			["highway"~"^(motorway|trunk|primary|secondary|tertiary|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|residential|unclassified|living_street)$"];
 			>;
 		);
@@ -45,7 +45,7 @@ func _ready() -> void:
 	query = """
 		[out:json][timeout:50];
 		(
-			way(53.76953,-0.38532,53.78109,-0.35163)
+			way(53.75980,-0.39443,53.78318,-0.35470)
 			["building"];>;
 		);
 		out;

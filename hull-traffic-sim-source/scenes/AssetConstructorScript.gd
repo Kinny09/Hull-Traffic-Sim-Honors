@@ -23,7 +23,10 @@ var roadInfoDictionary: Dictionary[String, Variant] = {
 	"id": 0,
 	"roadWidth": 0,
 	"lanes": 2,
-	"globalPosition": Vector2(0,0)
+	"globalPosition": Vector2(0,0),
+	"baseMovementCost": 0,
+	"congestion": 0.0,
+	"wayCapacity": 0.0
 }
 var placeInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
@@ -114,7 +117,7 @@ func _ready() -> void:
 		
 		# Moving the road to a place near it's real position
 		var randomNode = roadNodes[way["nodes"][0]]
-		globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
+		globalRoadPosition = randomNode["position"]
 		newRoad.set_global_position(globalRoadPosition)
 		newRoadInfoDictionary["globalPosition"] = globalRoadPosition
 		
@@ -187,8 +190,8 @@ func _ready() -> void:
 				var currentNode = roadNodes[listOfNodesInWay[nodeIndex]]
 				var nodeAhead = roadNodes[listOfNodesInWay[nodeIndex + 1]]
 				
-				var currentNodeVector = Vector2(currentNode["X"], currentNode["Y"])
-				var nodeAheadVector =  Vector2(nodeAhead["X"], nodeAhead["Y"])
+				var currentNodeVector = currentNode["position"]
+				var nodeAheadVector =  nodeAhead["position"]
 				
 				newClickSegment.shape = RectangleShape2D.new()
 				newClickSegment.name = "Roads|"+ str(clickSegmentCount) + "|" + str(newRoad.name)
@@ -200,7 +203,7 @@ func _ready() -> void:
 				
 				ClickingDetection.add_child(newClickSegment)
 		
-		# Finding nodes that are adjacent to each other and documenting that
+		# Finding nodes that are adjacent to each other and documenting that, also adding the nodes parent
 		for nodeIndex in listOfNodesInWay.size():
 			var nodeID = listOfNodesInWay[nodeIndex]
 			if nodeIndex - 1 >= 0 and not roadWays[wayID]["oneWay"]:
@@ -208,6 +211,25 @@ func _ready() -> void:
 			
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
 				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex + 1])
+				
+			roadNodes[nodeID]["parentWay"].append(roadNodes[nodeID])
+			
+		# Calculating the base cost of moving inside this way
+		var wayCapacity: int = 0
+		var baseCost: int = 0
+		
+		if roadWays[wayID]["lanes"] / 2 != 0:
+			wayCapacity = 500 * (roadWays[wayID]["lanes"] / 2) * (roadWays[wayID]["speedLimit"] / 4)
+			baseCost = 500 / roadWays[wayID]["speedLimit"] / (roadWays[wayID]["lanes"] / 2)
+			
+		else:
+			wayCapacity = 500 * (roadWays[wayID]["lanes"]) * (roadWays[wayID]["speedLimit"] / 4)
+			baseCost = 500 / roadWays[wayID]["speedLimit"] / (roadWays[wayID]["lanes"])
+		
+		roadWays[wayID]["wayCapacity"] = wayCapacity
+		roadWays[wayID]["baseMovementCost"] = baseCost
+		
+		
 					
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	# Loading the Buildings
@@ -236,7 +258,7 @@ func _ready() -> void:
 				
 		# Moving the building to a place near it's real position
 		var randomBuildingNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
-		var globalBuildingPosition = Vector2(randomBuildingNode["X"], randomBuildingNode["Y"])
+		var globalBuildingPosition = randomBuildingNode["position"]
 		newBuilding.set_global_position(globalBuildingPosition)
 		
 		# Creating the click detection zone for the building
@@ -250,7 +272,7 @@ func _ready() -> void:
 		var arrayOfVectors = []
 		for nodeID in buildingWay["nodes"]:
 			var node = ImportedData.buildingNodeData[nodeID]
-			var currentVector = Vector2(node.X, node.Y) - globalBuildingPosition
+			var currentVector = node["position"] - globalBuildingPosition
 			arrayOfVectors.append(currentVector)
 		buildingShape.set_polygon(arrayOfVectors)
 		newClickZone.set_polygon(arrayOfVectors)
@@ -306,7 +328,7 @@ func laneLineConstructorEven(newRoad : Node2D, laneBeingConstructed : Line2D, la
 	# Adding the points for the line
 	for nodeID in listOfNodes:
 		var node = roadNodes[nodeID]
-		var currentVector = Vector2(node.X, node.Y) - globalRoadPosition
+		var currentVector = node["position"] - globalRoadPosition
 		laneBeingConstructed.add_point(currentVector)
 	
 	# Sorting out the width of the line and Zindex
