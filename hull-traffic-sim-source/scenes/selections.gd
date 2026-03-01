@@ -25,15 +25,14 @@ func itemClicked(selectedItemID):
 		selectionShape = get_node("../Buildings/" +  itemID + "/shape").duplicate()
 		selectionShape.color = Color(0.8, 0, 0.2, 0.9)
 		
-		## Creating the access road selection box if needed
+		## Creating the access road selection box if needed		
 		if buildingWaysDictionary[itemID]["buildingType"] != "roof":
-			var accessRoadID:String = buildingWaysDictionary[itemID]["accessRoad"]
-			var accessRoadOrigonalNodePosition = get_node("../Roads/" +  accessRoadID).position
-			var accessRoadSelectionShape = get_node("../Roads/" +  accessRoadID + "/pavement").duplicate()
-			accessRoadSelectionShape.set_default_color(Color(0.3, 0, 0.2, 0.9))
-			accessRoadSelectionShape.z_index = selectionShape.z_index + 10
-			accessRoadSelectionShape.position = accessRoadOrigonalNodePosition
-			add_child(accessRoadSelectionShape)
+			var accessNodeID = buildingWaysDictionary[itemID]["accessNode"]
+			var accessNodePosition: Vector2 = RoadsNode["roadNodes"][accessNodeID]["position"]
+			var nodeSelectionGraphic: Polygon2D = get_node("../DebuggingTools/Marker").duplicate()
+			nodeSelectionGraphic.set_global_position(accessNodePosition)
+			nodeSelectionGraphic.visible = true
+			add_child(nodeSelectionGraphic)
 		
 		## Creating and showing the workplaces a residence works at when their selected
 		if buildingWaysDictionary[itemID]["buildingType"] in ["house", "apartments", "dormitory"]:

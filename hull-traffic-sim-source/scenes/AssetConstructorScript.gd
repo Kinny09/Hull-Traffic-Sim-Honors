@@ -38,7 +38,7 @@ var residentialInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
 	"buildingID": 0,
 	"nodes": [],
-	"accessRoad": 0,
+	"accessNode": 0,
 	"numberOfResidents": 0,
 	"workplaces": {},
 	"globalPosition": Vector2(0,0)
@@ -47,7 +47,7 @@ var workplaceInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
 	"buildingID": 0,
 	"nodes": [],
-	"accessRoad": 0,
+	"accessNode": 0,
 	"employmentCapacity": 0,
 	"numberOfEmployees": 0,
 	"globalPosition": Vector2(0,0)
@@ -212,7 +212,7 @@ func _ready() -> void:
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
 				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex + 1])
 				
-			roadNodes[nodeID]["parentWay"].append(roadNodes[nodeID])
+			roadNodes[nodeID]["parentWay"].append(wayID)
 			
 		# Calculating the base cost of moving inside this way
 		var wayCapacity: int = 0
@@ -279,17 +279,14 @@ func _ready() -> void:
 		ClickingDetection.add_child(newClickZone)
 		
 		# Potentially edit this to be based of node position instead of road position. This would mean that nodes need to know what Ways their apart of.
-		# Finding the nearest road to set as the access road
+		# Finding the nearest node to set as the access node
 		if buildingType != "roof":
 			var closestDistance: float = 1000000
-			for roadID in roadWays:
-				var placePosition: Vector2 = globalBuildingPosition
-				var roadPosition: Vector2 = roadWays[str(roadID)]["globalPosition"]
-				var distanceFound: float = placePosition.distance_squared_to(roadPosition)
-				
+			for node in roadNodes.values():
+				var distanceFound: float = globalBuildingPosition.distance_squared_to(node["position"])
 				if distanceFound < closestDistance:
 					closestDistance = distanceFound
-					placeInfo["accessRoad"] = roadWays[str(roadID)]["id"]
+					placeInfo["accessNode"] = node["id"]
 		
 		# Setting non-building specific meta data
 		newBuilding.name = str(buildingCount)
