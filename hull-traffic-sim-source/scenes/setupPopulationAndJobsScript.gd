@@ -11,40 +11,41 @@ func _ready() -> void:
 	var totalJobs:int = get_meta("totalJobs")
 	
 	# Instansiating important variables
-	var totalNumberOfHouses:int = 0
-	var totalNumberOfHighDensity:int = 0
-	var totalNumberOfWorkplaces:int = 0
-	var totalNumberOfBuildings:int = 0
-	var arrayOfResidentialBuildings: Array[Dictionary] = []
-	var arrayOfWorkplaceBuildings: Array[Dictionary] = []
+	var roadsNode = $"../Roads"
+	#var totalNumberOfHouses:int = 0
+	#var totalNumberOfHighDensity:int = 0
+	#var totalNumberOfWorkplaces:int = 0
+	#var totalNumberOfBuildings:int = 0
+	#var ResidentialBuildings: Array[Dictionary] = 
 	
 	## -----------------------------------------------------------------------------------------------------------------------------------------------------
 	## Actual Code
 	## -----------------------------------------------------------------------------------------------------------------------------------------------------
 	await RoadsNode.ASSETS_CONSTRUCTED # Waiting for the assets to be constructed
 	
-	# Getting the necessary tables
-	var buildingWays:Dictionary = RoadsNode["buildingWays"]
+	# Getting the important tables
+	var residentialBuildings: Dictionary = roadsNode["residentialBuildings"]
+	var workplaceBuildings: Dictionary = roadsNode["workplaceBuildings"]
+	
+	# Prepering important variables
+	var totalNumberOfHouses:int = 0
+	var totalNumberOfHighDensity:int = 0
+	var totalNumberOfWorkplaces: int = workplaceBuildings.size()
+	var totalNumberOfBuildings: int = workplaceBuildings.size() + residentialBuildings.size()
+	var workplaceBuildingsArray: Array[Dictionary] = []
 	
 	# Finding the numbers of the different types of housing and the number of workplaces
-	for building in buildingWays.values():
-		var buildingType:String = building["buildingType"]
+	for residentialBuilding in residentialBuildings.values():
+		var buildingType:String = residentialBuilding["buildingType"]
 		
 		match buildingType:
 			"house":
 				totalNumberOfHouses += 1
-				arrayOfResidentialBuildings.append(building)
 				
 			"apartments", "dormitory":
 				totalNumberOfHighDensity += 1
-				arrayOfResidentialBuildings.append(building)
-			
-			_ when buildingType != "roof":
-				totalNumberOfWorkplaces += 1
-				arrayOfWorkplaceBuildings.append(building)
 	
-	# Figuring out how many people should live and work in the places.
-	totalNumberOfBuildings = buildingWays.size()
+	## Figuring out how many people should live and work in the places.
 	@warning_ignore("integer_division")
 	var peoplePerHighDensity:int =  totalPopulation * totalNumberOfHighDensity / totalNumberOfBuildings
 	@warning_ignore("integer_division")
@@ -52,47 +53,52 @@ func _ready() -> void:
 	@warning_ignore("integer_division")
 	var peoplePerWorkplace:int = totalJobs/totalNumberOfWorkplaces
 	
-	# Adding the people to residence and workplaces
-	for building in buildingWays.values():
-		var buildingType:String = building["buildingType"]
+	 # Adding the people to residence
+	for residentialBuilding in residentialBuildings.values():
+		var buildingType:String = residentialBuilding["buildingType"]
 		
 		match buildingType:
 			"house":
-				building["numberOfResidents"] = peoplePerHouse
+				residentialBuilding["numberOfResidents"] = peoplePerHouse
 				
 			"apartments", "dormitory":
-				building["numberOfResidents"] = peoplePerHighDensity
-			
-			_ when buildingType != "roof":
-				building["employmentCapacity"] = peoplePerWorkplace
-				
-	# Giving residences their Workplaces
+				residentialBuilding["numberOfResidents"] = peoplePerHighDensity
+		
+	# Adding the workers to the workplaces
+	for workplaceBuilding in workplaceBuildings.values():
+		var buildingType:String = workplaceBuilding["buildingType"]
+		workplaceBuildingsArray.append(workplaceBuilding)
+		
+		if buildingType != "roof":
+			workplaceBuilding["employmentCapacity"] = peoplePerWorkplace
+		
+	## Giving residences their workplaces
 	var workplaceIndex:int = 0
 	
-	for residence in arrayOfResidentialBuildings:
-		var numberOfResidenceToGiveJobsTo:int = residence["numberOfResidents"]
+	for residentialBuilding in residentialBuildings.values():
+		var numberOfResidenceToGiveJobsTo:int = residentialBuilding["numberOfResidents"]
 
-		while numberOfResidenceToGiveJobsTo > 0:
-			var workplaceCurrentlyBeingPopulated:Dictionary = arrayOfWorkplaceBuildings[workplaceIndex]
-			var workplaceID:String = workplaceCurrentlyBeingPopulated["buildingID"]
-			var numberOfOpenJobsForCurrentBuilding:int = workplaceCurrentlyBeingPopulated["employmentCapacity"] - workplaceCurrentlyBeingPopulated["numberOfEmployees"]
+		while numberOfResidenceToGiveJobsTo > 0 && workplaceIndex <= workplaceBuildingsArray.size() - 1:
+			var workplaceCurrentlyBeingPopulated: Dictionary = workplaceBuildingsArray[workplaceIndex]
+			var workplaceID: String = workplaceCurrentlyBeingPopulated["buildingID"]
+			var numberOfOpenJobsForCurrentBuilding: int = workplaceCurrentlyBeingPopulated["employmentCapacity"] - workplaceCurrentlyBeingPopulated["numberOfEmployees"]
 			
 			# What to do if the workplace has more jobs than the residence can provide
 			if numberOfResidenceToGiveJobsTo < numberOfOpenJobsForCurrentBuilding:
 				workplaceCurrentlyBeingPopulated["numberOfEmployees"] += numberOfResidenceToGiveJobsTo
-				residence["workplaces"][workplaceID] = numberOfResidenceToGiveJobsTo
+				residentialBuilding["workplaces"][workplaceID] = numberOfResidenceToGiveJobsTo
 				numberOfResidenceToGiveJobsTo = 0
 			
 			# What to do if the workplace has the same amount of jobs as the residence can provide
 			elif numberOfResidenceToGiveJobsTo == numberOfOpenJobsForCurrentBuilding:
 				workplaceCurrentlyBeingPopulated["numberOfEmployees"] += numberOfResidenceToGiveJobsTo
-				residence["workplaces"][workplaceID] = numberOfResidenceToGiveJobsTo
+				residentialBuilding["workplaces"][workplaceID] = numberOfResidenceToGiveJobsTo
 				numberOfResidenceToGiveJobsTo = 0
 				workplaceIndex += 1
 				
 			# What to do if the workplace has less jobs than the residence can provide
 			elif numberOfResidenceToGiveJobsTo > numberOfOpenJobsForCurrentBuilding:
 				workplaceCurrentlyBeingPopulated["numberOfEmployees"] += numberOfOpenJobsForCurrentBuilding
-				residence["workplaces"][workplaceID] = numberOfOpenJobsForCurrentBuilding
+				residentialBuilding["workplaces"][workplaceID] = numberOfOpenJobsForCurrentBuilding
 				numberOfResidenceToGiveJobsTo -= numberOfOpenJobsForCurrentBuilding
 				workplaceIndex += 1

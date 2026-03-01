@@ -260,7 +260,6 @@ func _ready() -> void:
 			_:
 				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
 				placeInfo = workplaceInfoDictionary.duplicate(true)
-				residentialBuildings[buildingCount] = placeInfo
 				workplaceBuildings[buildingCount] = placeInfo
 				
 		# Moving the building to a place near it's real position
@@ -312,7 +311,7 @@ func _ready() -> void:
 	ImportedData.queue_free()
 	
 	# Telling the rest of the simulation the asset constructing is done
-	#ASSETS_CONSTRUCTED.emit()
+	ASSETS_CONSTRUCTED.emit()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()
