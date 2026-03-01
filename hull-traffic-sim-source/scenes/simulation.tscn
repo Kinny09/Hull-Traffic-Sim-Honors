@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://l2eeeqvrge33" path="res://Scenes/HTTPRequestScript.gd" id="1_3p1jw"]
 [ext_resource type="Script" uid="uid://d1c7oo7tknvjn" path="res://Scenes/debuggingToolsScript.gd" id="1_83pfb"]
 [ext_resource type="Script" uid="uid://b5uv4qmddijd0" path="res://Scenes/JSONConverterScript.gd" id="1_wpefv"]
-[ext_resource type="Script" uid="uid://c3xj35jq7w1ly" path="res://Scenes/assetConstructorScript.gd" id="1_y5vwh"]
+[ext_resource type="Script" uid="uid://cwdmt1il8pnf3" path="res://Scenes/AssetConstructorScript.gd" id="1_y5vwh"]
 [ext_resource type="Script" uid="uid://ckuppgvjeohtv" path="res://Scenes/cameraMovementScript.gd" id="4_ypxof"]
 [ext_resource type="Script" uid="uid://cd6wuqsdkcewn" path="res://Scenes/clickDetectorScript.gd" id="5_83pfb"]
 [ext_resource type="Script" uid="uid://xhxhrm2gb0q1" path="res://Scenes/setupPopulationAndJobsScript.gd" id="6_c8cjm"]

@@ -11,6 +11,6 @@ config_version=5
 [application]
 
 config/name="HullTrafficSimSource"
-run/main_scene="uid://dwl0im38iqcjv"
+run/main_scene="uid://c2oeykliqa384"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
