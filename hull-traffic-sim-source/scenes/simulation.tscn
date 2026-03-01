@@ -1,14 +1,14 @@
 [gd_scene load_steps=10 format=3 uid="uid://dwl0im38iqcjv"]
 
-[ext_resource type="Script" uid="uid://l2eeeqvrge33" path="res://Scenes/HTTPRequestScript.gd" id="1_3p1jw"]
-[ext_resource type="Script" uid="uid://d1c7oo7tknvjn" path="res://Scenes/debuggingToolsScript.gd" id="1_83pfb"]
-[ext_resource type="Script" uid="uid://b5uv4qmddijd0" path="res://Scenes/JSONConverterScript.gd" id="1_wpefv"]
-[ext_resource type="Script" uid="uid://2flrxgrg56fs" path="res://Scenes/AssetConstructorScript.gd" id="1_y5vwh"]
-[ext_resource type="Script" uid="uid://ckuppgvjeohtv" path="res://Scenes/cameraMovementScript.gd" id="4_ypxof"]
-[ext_resource type="Script" uid="uid://cd6wuqsdkcewn" path="res://Scenes/clickDetectorScript.gd" id="5_83pfb"]
-[ext_resource type="Script" uid="uid://xhxhrm2gb0q1" path="res://Scenes/setupPopulationAndJobsScript.gd" id="6_c8cjm"]
-[ext_resource type="Script" uid="uid://btspsj0ytcytu" path="res://Scenes/selections.gd" id="6_gfe5q"]
-[ext_resource type="PackedScene" uid="uid://cg6ndwf2gjjop" path="res://Scenes/simulation_ui.tscn" id="7_v0ioj"]
+[ext_resource type="Script" uid="uid://l2eeeqvrge33" path="res://scenes/HTTPRequestScript.gd" id="1_3p1jw"]
+[ext_resource type="Script" uid="uid://d1c7oo7tknvjn" path="res://scenes/DebuggingToolsScript.gd" id="1_83pfb"]
+[ext_resource type="Script" uid="uid://b5uv4qmddijd0" path="res://scenes/JSONConverterScript.gd" id="1_wpefv"]
+[ext_resource type="Script" uid="uid://2flrxgrg56fs" path="res://scenes/AssetConstructorScript.gd" id="1_y5vwh"]
+[ext_resource type="Script" uid="uid://ckuppgvjeohtv" path="res://scenes/cameraMovementScript.gd" id="4_ypxof"]
+[ext_resource type="Script" uid="uid://cd6wuqsdkcewn" path="res://scenes/clickDetectorScript.gd" id="5_83pfb"]
+[ext_resource type="Script" uid="uid://xhxhrm2gb0q1" path="res://scenes/setupPopulationAndJobsScript.gd" id="6_c8cjm"]
+[ext_resource type="Script" uid="uid://btspsj0ytcytu" path="res://scenes/selections.gd" id="6_gfe5q"]
+[ext_resource type="PackedScene" uid="uid://cg6ndwf2gjjop" path="res://scenes/simulation_ui.tscn" id="7_v0ioj"]
 
 [node name="Simulation" type="Node2D"]
 

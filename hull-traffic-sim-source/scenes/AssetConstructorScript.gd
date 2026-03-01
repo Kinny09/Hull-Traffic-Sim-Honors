@@ -8,7 +8,9 @@ signal ASSETS_CONSTRUCTED()
 
 var roadNodes: Dictionary = {}
 var roadWays: Dictionary = {}
-var buildingWays: Dictionary = {}
+var residentialBuildings: Dictionary = {}
+var workplaceBuildings: Dictionary = {}
+var miscBuildings: Dictionary = {}
 var roadInfoDictionary: Dictionary[String, Variant] = {
 	"speedLimit": 60,
 	"nodes": [],
@@ -195,6 +197,7 @@ func _ready() -> void:
 				
 				newClickSegment.shape = RectangleShape2D.new()
 				newClickSegment.name = "Roads|"+ str(clickSegmentCount) + "|" + str(newRoad.name)
+				newClickSegment.set_meta("pairedSelection", newRoadInfoDictionary)
 				newClickSegment.set_global_position((currentNodeVector + nodeAheadVector) / 2)
 				clickSegmentCount = clickSegmentCount + 1
 				
@@ -249,12 +252,16 @@ func _ready() -> void:
 			"house", "apartments", "dormitory":
 				newBuilding = get_node("../BuildingAssets/residential").duplicate()
 				placeInfo = residentialInfoDictionary.duplicate(true)
+				residentialBuildings[buildingCount] = placeInfo
 			"roof":
 				newBuilding = get_node("../BuildingAssets/place").duplicate()
 				placeInfo = placeInfoDictionary.duplicate(true)
+				miscBuildings[buildingCount] = placeInfo
 			_:
 				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
 				placeInfo = workplaceInfoDictionary.duplicate(true)
+				residentialBuildings[buildingCount] = placeInfo
+				workplaceBuildings[buildingCount] = placeInfo
 				
 		# Moving the building to a place near it's real position
 		var randomBuildingNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
@@ -265,6 +272,7 @@ func _ready() -> void:
 		var newClickZone = CollisionPolygon2D.new()
 		newClickZone.name = "Buildings|" + str(buildingCount)
 		newClickZone.set_global_position(globalBuildingPosition)
+		newClickZone.set_meta("pairedSelection", placeInfo)
 		newClickZone.z_index = 50
 		
 		# Drawing the buildings shape
@@ -278,7 +286,6 @@ func _ready() -> void:
 		newClickZone.set_polygon(arrayOfVectors)
 		ClickingDetection.add_child(newClickZone)
 		
-		# Potentially edit this to be based of node position instead of road position. This would mean that nodes need to know what Ways their apart of.
 		# Finding the nearest node to set as the access node
 		if buildingType != "roof":
 			var closestDistance: float = 1000000
@@ -299,14 +306,13 @@ func _ready() -> void:
 		newBuilding.visible = true
 		
 		# Adding buildings to the building node
-		buildingWays[str(buildingCount)] = placeInfo
 		buildingsNode.add_child(newBuilding)
 		
 	# Removing the imported data node as it is no longer needed
 	ImportedData.queue_free()
 	
 	# Telling the rest of the simulation the asset constructing is done
-	ASSETS_CONSTRUCTED.emit()
+	#ASSETS_CONSTRUCTED.emit()
 		
 func figureOutBoolValueForMetaData(valueToInterpret: String):
 	valueToInterpret.to_lower()
