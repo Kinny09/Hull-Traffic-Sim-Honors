@@ -127,7 +127,7 @@ metadata/oneWay = false
 metadata/bridge = false
 metadata/lit = false
 metadata/trafficCalming = false
-metadata/lanes = 4
+metadata/lanes = 2
 
 [node name="5" type="Line2D" parent="UninitializedWays"]
 z_index = -1
@@ -140,7 +140,7 @@ metadata/oneWay = false
 metadata/bridge = false
 metadata/lit = false
 metadata/trafficCalming = false
-metadata/lanes = 4
+metadata/lanes = 2
 
 [node name="6" type="Line2D" parent="UninitializedWays"]
 z_index = -1

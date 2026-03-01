@@ -26,7 +26,7 @@ func _ready() -> void:
 			newODPair.agentsUsing = initalNumberOfAgents
 			tableOfODPairs.append(newODPair)
 	
-	# Doing the inital pass through of ODPairs and figuring out where they go without factoring in congestion
+	# Finding the path each OD pair takes and adding congestion to it
 	for ODPairToPathFindFor in tableOfODPairs:
 		var pathFound: Array[Dictionary] = a_star_pathfind(ODPairToPathFindFor, true)
 		ODPairToPathFindFor.routeNodes = pathFound
@@ -72,9 +72,9 @@ func a_star_pathfind(originDestinationPair: ODPair, factorInCongestion: bool = f
 			
 			# Checking if congestion should be factored in
 			var parentWay: Dictionary = neighbourNode["parentWay"][0]
-			var congestion: int = 0
+			var congestion: float = 0
 			if factorInCongestion == true:
-				congestion = parentWay["congestion"]
+				congestion = (float(parentWay["congestion"]) / float(parentWay["wayCapacity"])) * 1000
 			
 			# Checking how many parent ways the node has and working out the cost accordingly
 			var numberOfParentWays: int = neighbourNode.size()
@@ -82,22 +82,22 @@ func a_star_pathfind(originDestinationPair: ODPair, factorInCongestion: bool = f
 				neighbourNode["incrementalCost"] = parentWay["baseMove"] + congestion
 				neighbourNode["estimatedDistanceCost"] = neighbourNode["position"].distance_to(destination["position"])
 				neighbourNode["totalCost"] = neighbourNode["incrementalCost"] + neighbourNode["estimatedDistanceCost"]
-				#print(str(neighbourNode["totalCost"]) + " = " + str(parentWay["baseMove"]) + "+" + str(congestion) + "+" + str(neighbourNode["estimatedDistanceCost"]))
+			
 			else:
 				neighbourNode["incrementalCost"] = 3 * numberOfParentWays + congestion
 				neighbourNode["estimatedDistanceCost"] = neighbourNode["position"].distance_to(destination["position"])
 				neighbourNode["totalCost"] = neighbourNode["incrementalCost"] + neighbourNode["estimatedDistanceCost"]
-				#print(str(neighbourNode["totalCost"]) + " = " + str(3 * numberOfParentWays) + "+" + str(congestion) + "+" + str(neighbourNode["estimatedDistanceCost"]))
 			
 			var tentativeCost = currentNode["totalCost"] + neighbourNode["totalCost"]
 			
 			if not neighbourNode in openList:
+				neighbourNode["parentNode"] = currentNode
 				openList.append(neighbourNode)
-				openList.sort_custom(func(a, b): return a["totalCost"] < b["totalCost"])
 				
 			elif tentativeCost >= neighbourNode["totalCost"]:
 				continue
-
+			
+			openList.sort_custom(func(a, b): return a["totalCost"] < b["totalCost"])
 			neighbourNode["parentNode"] = currentNode
 	return []
 

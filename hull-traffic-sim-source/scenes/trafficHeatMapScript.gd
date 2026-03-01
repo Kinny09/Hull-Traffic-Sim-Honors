@@ -24,6 +24,7 @@ func _ready() -> void:
 		newHeatMapHelper.heatMapAsset.z_index += 1
 		newHeatMapHelper.roadInfo = Roads["roadWays"][wayID]
 		newHeatMapHelper.congestion = newHeatMapHelper.roadInfo["congestion"]
+		newHeatMapHelper.wayCapacity = newHeatMapHelper.roadInfo["wayCapacity"]
 		add_child(newHeatMapHelper.heatMapAsset)
 		tableOfHeatMapAssets.append(newHeatMapHelper)
 		
@@ -36,17 +37,17 @@ func UpdateHeatMap() -> void:
 	# Updating the congestion values
 	for heatMapHelperToUpdate in tableOfHeatMapAssets:
 		heatMapHelperToUpdate.congestion = heatMapHelperToUpdate.roadInfo["congestion"]
+		heatMapHelperToUpdate.wayCapacity = heatMapHelperToUpdate.roadInfo["wayCapacity"]
 	
 	# Sorting the array by congestion
 	tableOfHeatMapAssets.sort_custom(func(a, b): return a.congestion > b.congestion)
 	
 	# Getting a baseline for the most congested road that all the others will be based off of
-	var congestionBaseline: float = tableOfHeatMapAssets[0].congestion
 	var redChannelBaseline: float = 1
 	
 	# Iterating through the assets, working out their relative congestion and figuring out the colour they should be
 	for heatMapHelperToCheck in tableOfHeatMapAssets:
-		var redChannel: float = heatMapHelperToCheck.congestion / congestionBaseline
+		var redChannel: float = float(heatMapHelperToCheck.congestion) / float(heatMapHelperToCheck.wayCapacity)
 		var greenChannel: float = redChannelBaseline - redChannel
 		heatMapHelperToCheck.heatMapAsset.set_default_color(Color(redChannel, greenChannel, 0))	
 	
@@ -55,3 +56,4 @@ class HeatMapHelper:
 	var heatMapAsset: Line2D 
 	var roadInfo: Dictionary
 	var congestion: int
+	var wayCapacity: int

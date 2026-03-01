@@ -73,7 +73,9 @@ func _ready() -> void:
 	## -----------------------------------------------------------------------------------------------------------------------------------------------------
 	for way in roadWays.values():
 		# Calculating the base cost of moving inside this way
-		var baseCost: int = 200 / way["speedLimit"] / (way["lanes"] / 2)
+		var wayCapacity: int = 500 * (way["lanes"] / 2) * (way["speedLimit"] / 4)
+		var baseCost: int = 500 / way["speedLimit"] / (way["lanes"] / 2)
+		way["wayCapacity"] = wayCapacity
 		way["baseMovementCost"] = baseCost
 		
 		# Finding out which nodes are adjacent to which
