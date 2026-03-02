@@ -5,9 +5,11 @@ extends Node
 @onready var Buildings = $"../Buildings"
 
 ## Member Variables
-var tableOfODPairs: Dictionary[String, ODPair] = {}
+var tableOfODPairs: Array[ODPair] = []
 
-## Main
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
+# Main
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
 func _ready() -> void:
 	await Buildings.BUILDINGS_POPULATED # Waits for the buildings to be populated
 	
@@ -15,6 +17,7 @@ func _ready() -> void:
 	for residentialBuilding: Dictionary in Roads["residentialBuildings"].values():
 		var originID = residentialBuilding["accessNode"]
 		var origin: Dictionary = Roads["roadNodes"][originID]
+		residentialBuilding["originDestinationPairs"] = []
 		
 		for workplaceID in residentialBuilding["workplaces"]:
 			var workplace: Dictionary = Roads["workplaceBuildings"][int(workplaceID)]
@@ -23,17 +26,17 @@ func _ready() -> void:
 			var initalNumberOfAgents: int = residentialBuilding["workplaces"][workplaceID]
 			var newODPair = ODPair.new(origin, destination)
 			newODPair.agentsUsing = initalNumberOfAgents
-			tableOfODPairs[str(originID)] = newODPair
+			tableOfODPairs.append(newODPair)
+			residentialBuilding["originDestinationPairs"].append(newODPair)
 	
 	#Finding the path each OD pair takes and adding congestion to it
-	for ODPairToPathFindFor in tableOfODPairs.values():
-		var pathFound = a_star_pathfind(ODPairToPathFindFor) 
+	for ODPairToPathFindFor in tableOfODPairs:
+		var pathFound = a_star_pathfind(ODPairToPathFindFor, true) 
 		if pathFound.size() > 0:
-			print("Path found")
 			ODPairToPathFindFor.routeNodes = pathFound
 			add_congestion_to_ways(ODPairToPathFindFor)
 		elif pathFound.size() <= 0:
-			print("No path found")
+			ODPairToPathFindFor.routeNodes = pathFound
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Functions
@@ -77,7 +80,7 @@ func a_star_pathfind(originDestinationPair: ODPair, factorInCongestion: bool = f
 			var parentWay: Dictionary = neighbourNode["parentWay"][0]
 			var congestion: float = 0
 			if factorInCongestion == true:
-				congestion = (float(parentWay["congestion"]) / float(parentWay["wayCapacity"])) * 1000
+				congestion = (float(parentWay["congestion"]) / float(parentWay["wayCapacity"])) * 20
 			
 			# Checking how many parent ways the node has and working out the cost accordingly
 			var numberOfParentWays: int = neighbourNode.size()
@@ -126,11 +129,6 @@ func add_congestion_to_ways(originDestinationPairToAddCongestionTo: ODPair) -> v
 				
 			else:
 				parentWay["congestion"] += originDestinationPairToAddCongestionTo.agentsUsing / numberOfLanesOnOneSide
-
-
-
-
-
 
 ## Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:

@@ -3,8 +3,6 @@ extends Node
 ## Getting the necessary nodes
 @onready var Roads = $"../../Roads"
 
-# This script will need to be completely recoded for the actual simulation
-
 # Member variables
 var updateHeatMapThread: Thread
 var tableOfHeatMapAssets: Array[HeatMapHelper] = []
