@@ -2,6 +2,8 @@ extends Node
 
 @onready var RoadsNode = $"../Roads"
 
+signal BUILDINGS_POPULATED()
+
 func _ready() -> void:
 	## -----------------------------------------------------------------------------------------------------------------------------------------------------
 	## Setup
@@ -12,11 +14,6 @@ func _ready() -> void:
 	
 	# Instansiating important variables
 	var roadsNode = $"../Roads"
-	#var totalNumberOfHouses:int = 0
-	#var totalNumberOfHighDensity:int = 0
-	#var totalNumberOfWorkplaces:int = 0
-	#var totalNumberOfBuildings:int = 0
-	#var ResidentialBuildings: Array[Dictionary] = 
 	
 	## -----------------------------------------------------------------------------------------------------------------------------------------------------
 	## Actual Code
@@ -102,3 +99,5 @@ func _ready() -> void:
 				residentialBuilding["workplaces"][workplaceID] = numberOfOpenJobsForCurrentBuilding
 				numberOfResidenceToGiveJobsTo -= numberOfOpenJobsForCurrentBuilding
 				workplaceIndex += 1
+				
+	BUILDINGS_POPULATED.emit()

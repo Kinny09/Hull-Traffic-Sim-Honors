@@ -5,32 +5,35 @@ extends Node
 @onready var Buildings = $"../Buildings"
 
 ## Member Variables
-var tableOfODPairs: Array[ODPair] = []
-#var test = null
+var tableOfODPairs: Dictionary[String, ODPair] = {}
 
 ## Main
 func _ready() -> void:
-	await get_tree().create_timer(1.0).timeout # Replace this with a proper signal
+	await Buildings.BUILDINGS_POPULATED # Waits for the buildings to be populated
 	
 	# Setting up the inital OD pairs
-	for residentialBuilding: Dictionary in Buildings["residentialBuildings"].values():
-		var originID: String = str(residentialBuilding["accessNode"])
+	for residentialBuilding: Dictionary in Roads["residentialBuildings"].values():
+		var originID = residentialBuilding["accessNode"]
 		var origin: Dictionary = Roads["roadNodes"][originID]
 		
 		for workplaceID in residentialBuilding["workplaces"]:
-			var workplace: Dictionary = Buildings["workplaceBuildings"][workplaceID]
+			var workplace: Dictionary = Roads["workplaceBuildings"][int(workplaceID)]
 			var destinationID: String = str(workplace["accessNode"])
-			var destination: Dictionary = Roads["roadNodes"][destinationID]
+			var destination: Dictionary = Roads["roadNodes"][int(destinationID)]
 			var initalNumberOfAgents: int = residentialBuilding["workplaces"][workplaceID]
 			var newODPair = ODPair.new(origin, destination)
 			newODPair.agentsUsing = initalNumberOfAgents
-			tableOfODPairs.append(newODPair)
+			tableOfODPairs[str(originID)] = newODPair
 	
-	# Finding the path each OD pair takes and adding congestion to it
-	for ODPairToPathFindFor in tableOfODPairs:
-		var pathFound: Array[Dictionary] = a_star_pathfind(ODPairToPathFindFor, true)
-		ODPairToPathFindFor.routeNodes = pathFound
-		add_congestion_to_ways(ODPairToPathFindFor)
+	#Finding the path each OD pair takes and adding congestion to it
+	for ODPairToPathFindFor in tableOfODPairs.values():
+		var pathFound = a_star_pathfind(ODPairToPathFindFor) 
+		if pathFound.size() > 0:
+			print("Path found")
+			ODPairToPathFindFor.routeNodes = pathFound
+			add_congestion_to_ways(ODPairToPathFindFor)
+		elif pathFound.size() <= 0:
+			print("No path found")
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Functions
@@ -64,7 +67,7 @@ func a_star_pathfind(originDestinationPair: ODPair, factorInCongestion: bool = f
 		
 		# Check all the neighbouring nodes and add them to the open list in cost order
 		for neighbourNodeID in currentNode["adjacentNodes"]:
-			var neighbourNode: Dictionary = Roads["roadNodes"][str(neighbourNodeID)]
+			var neighbourNode: Dictionary = Roads["roadNodes"][int(neighbourNodeID)]
 			
 			# Check if the neighbour node has already been calculated
 			if neighbourNode in closedList:
@@ -109,7 +112,7 @@ func reconstruct_a_star_path(currentNode: Dictionary) -> Array[Dictionary]:
 	while nodeWorkingBackFrom != null:
 		path.append(nodeWorkingBackFrom)
 		nodeWorkingBackFrom = nodeWorkingBackFrom["parentNode"]
-		
+
 	return path
 
 ## Adds the congestion to the ways it travels on
@@ -117,7 +120,12 @@ func add_congestion_to_ways(originDestinationPairToAddCongestionTo: ODPair) -> v
 	for node in originDestinationPairToAddCongestionTo.routeNodes:
 		for parentWay in node["parentWay"]:
 			var numberOfLanesOnOneSide = parentWay["lanes"] / 2
-			parentWay["congestion"] += originDestinationPairToAddCongestionTo.agentsUsing / numberOfLanesOnOneSide
+			
+			if numberOfLanesOnOneSide == 0:
+				parentWay["congestion"] += originDestinationPairToAddCongestionTo.agentsUsing
+				
+			else:
+				parentWay["congestion"] += originDestinationPairToAddCongestionTo.agentsUsing / numberOfLanesOnOneSide
 
 
 

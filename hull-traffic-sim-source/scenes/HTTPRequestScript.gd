@@ -31,8 +31,8 @@ func _ready() -> void:
 	query = """
 		[out:json][timeout:50];
 		(
-			way(53.75980,-0.39443,53.78318,-0.35470)
-			["highway"~"^(motorway|trunk|primary|secondary|tertiary|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|residential|unclassified|living_street)$"];
+			way(53.76832,-0.39825,53.78306,-0.35444)
+			["highway"~"^(motorway|trunk|primary|secondary|tertiary|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|residential|unclassified|living_street|service)$"];
 			>;
 		);
 		out;
@@ -45,7 +45,7 @@ func _ready() -> void:
 	query = """
 		[out:json][timeout:50];
 		(
-			way(53.75980,-0.39443,53.78318,-0.35470)
+			way(53.76832,-0.39825,53.78306,-0.35444)
 			["building"];>;
 		);
 		out;

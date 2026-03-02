@@ -215,7 +215,7 @@ func _ready() -> void:
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
 				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex + 1])
 				
-			roadNodes[nodeID]["parentWay"].append(wayID)
+			roadNodes[nodeID]["parentWay"].append(newRoadInfoDictionary)
 			
 		# Calculating the base cost of moving inside this way
 		var wayCapacity: int = 0
