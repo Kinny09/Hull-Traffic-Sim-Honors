@@ -4,7 +4,7 @@ extends Node
 @onready var Roads = $"../Roads"
 @onready var Buildings = $"../Buildings"
 
-## Member Variables
+## Member Variables 
 var tableOfODPairs: Array[ODPair] = []
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,6 +29,7 @@ func _ready() -> void:
 			tableOfODPairs.append(newODPair)
 			residentialBuilding["originDestinationPairs"].append(newODPair)
 	
+	var count: int = 0
 	#Finding the path each OD pair takes and adding congestion to it
 	for ODPairToPathFindFor in tableOfODPairs:
 		var pathFound = a_star_pathfind(ODPairToPathFindFor, true) 
@@ -37,6 +38,8 @@ func _ready() -> void:
 			add_congestion_to_ways(ODPairToPathFindFor)
 		elif pathFound.size() <= 0:
 			ODPairToPathFindFor.routeNodes = pathFound
+		count += 1
+		print(str(count) + "/" + str(tableOfODPairs.size()))
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Functions
