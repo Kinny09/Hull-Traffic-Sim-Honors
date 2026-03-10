@@ -81,9 +81,12 @@ func loadImportedDataDictionary(importedDataDictionary : Dictionary):
 				var longitude = objectBeingEdited["lon"]
 				
 				var position = convertLongLatToScreenXY(latitude, longitude)
-				objectBeingEdited["X"] = position[1]
-				objectBeingEdited["Y"] = position[0]
+				objectBeingEdited["position"] = Vector2(position[1], position[0])
+				#objectBeingEdited["X"] = position[1]
+				#objectBeingEdited["Y"] = position[0]
 				objectBeingEdited["adjacentNodes"] = []
+				objectBeingEdited["parentWay"] = []
+				
 				
 				# Adding the object to the parsedNode list
 				parsedNodes[objectID] = objectBeingEdited

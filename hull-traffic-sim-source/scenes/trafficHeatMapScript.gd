@@ -2,10 +2,6 @@ extends Node
 
 ## Getting the necessary nodes
 @onready var Roads = $"../../Roads"
-@onready var UninitalizedWays = $"../../UninitializedWays"
-
-
-# This script will need to be completely recoded for the actual simulation
 
 # Member variables
 var updateHeatMapThread: Thread
@@ -14,14 +10,15 @@ var updateTimer: int = 2 # Replace this with a signal from the traffic simulatio
 
 ## Main
 func _ready() -> void:
-	await get_tree().create_timer(1.0).timeout # Replace this with a proper signal
+	await Roads.ASSETS_CONSTRUCTED # Waiting for the assets to be constructed
 	
 	# Initalizing the heatmap assets
 	for wayID in Roads["roadWays"]:
-		#var wayIDString: String = str(wayID)
+		var wayIDString: String = str(wayID)
 		var newHeatMapHelper: HeatMapHelper = HeatMapHelper.new()
-		newHeatMapHelper.heatMapAsset = get_node("../../UninitializedWays/" + wayID).duplicate(true)
-		newHeatMapHelper.heatMapAsset.z_index += 1
+		newHeatMapHelper.heatMapAsset = get_node("../../Roads/" +  wayIDString + "/pavement").duplicate(true)
+		newHeatMapHelper.heatMapAsset.z_index += 50
+		newHeatMapHelper.heatMapAsset.position = get_node("../../Roads/" +  wayIDString).position
 		newHeatMapHelper.roadInfo = Roads["roadWays"][wayID]
 		newHeatMapHelper.congestion = newHeatMapHelper.roadInfo["congestion"]
 		newHeatMapHelper.wayCapacity = newHeatMapHelper.roadInfo["wayCapacity"]
@@ -49,7 +46,7 @@ func UpdateHeatMap() -> void:
 	for heatMapHelperToCheck in tableOfHeatMapAssets:
 		var redChannel: float = float(heatMapHelperToCheck.congestion) / float(heatMapHelperToCheck.wayCapacity)
 		var greenChannel: float = redChannelBaseline - redChannel
-		heatMapHelperToCheck.heatMapAsset.set_default_color(Color(redChannel, greenChannel, 0))	
+		heatMapHelperToCheck.heatMapAsset.set_default_color(Color(redChannel, greenChannel, 0, 0.3))	
 	
 ## An inner class for each way that helps with handling the heat map
 class HeatMapHelper:

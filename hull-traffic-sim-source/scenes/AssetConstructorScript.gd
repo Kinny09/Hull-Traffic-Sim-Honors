@@ -8,7 +8,9 @@ signal ASSETS_CONSTRUCTED()
 
 var roadNodes: Dictionary = {}
 var roadWays: Dictionary = {}
-var buildingWays: Dictionary = {}
+var residentialBuildings: Dictionary = {}
+var workplaceBuildings: Dictionary = {}
+var miscBuildings: Dictionary = {}
 var roadInfoDictionary: Dictionary[String, Variant] = {
 	"speedLimit": 60,
 	"nodes": [],
@@ -23,7 +25,10 @@ var roadInfoDictionary: Dictionary[String, Variant] = {
 	"id": 0,
 	"roadWidth": 0,
 	"lanes": 2,
-	"globalPosition": Vector2(0,0)
+	"globalPosition": Vector2(0,0),
+	"baseMovementCost": 0,
+	"congestion": 0.0,
+	"wayCapacity": 0.0
 }
 var placeInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
@@ -35,7 +40,7 @@ var residentialInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
 	"buildingID": 0,
 	"nodes": [],
-	"accessRoad": 0,
+	"accessNode": 0,
 	"numberOfResidents": 0,
 	"workplaces": {},
 	"globalPosition": Vector2(0,0)
@@ -44,7 +49,7 @@ var workplaceInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
 	"buildingID": 0,
 	"nodes": [],
-	"accessRoad": 0,
+	"accessNode": 0,
 	"employmentCapacity": 0,
 	"numberOfEmployees": 0,
 	"globalPosition": Vector2(0,0)
@@ -114,7 +119,7 @@ func _ready() -> void:
 		
 		# Moving the road to a place near it's real position
 		var randomNode = roadNodes[way["nodes"][0]]
-		globalRoadPosition = Vector2(randomNode["X"], randomNode["Y"])
+		globalRoadPosition = randomNode["position"]
 		newRoad.set_global_position(globalRoadPosition)
 		newRoadInfoDictionary["globalPosition"] = globalRoadPosition
 		
@@ -187,11 +192,12 @@ func _ready() -> void:
 				var currentNode = roadNodes[listOfNodesInWay[nodeIndex]]
 				var nodeAhead = roadNodes[listOfNodesInWay[nodeIndex + 1]]
 				
-				var currentNodeVector = Vector2(currentNode["X"], currentNode["Y"])
-				var nodeAheadVector =  Vector2(nodeAhead["X"], nodeAhead["Y"])
+				var currentNodeVector = currentNode["position"]
+				var nodeAheadVector =  nodeAhead["position"]
 				
 				newClickSegment.shape = RectangleShape2D.new()
 				newClickSegment.name = "Roads|"+ str(clickSegmentCount) + "|" + str(newRoad.name)
+				newClickSegment.set_meta("pairedSelection", newRoadInfoDictionary)
 				newClickSegment.set_global_position((currentNodeVector + nodeAheadVector) / 2)
 				clickSegmentCount = clickSegmentCount + 1
 				
@@ -200,7 +206,7 @@ func _ready() -> void:
 				
 				ClickingDetection.add_child(newClickSegment)
 		
-		# Finding nodes that are adjacent to each other and documenting that
+		# Finding nodes that are adjacent to each other and documenting that, also adding the nodes parent
 		for nodeIndex in listOfNodesInWay.size():
 			var nodeID = listOfNodesInWay[nodeIndex]
 			if nodeIndex - 1 >= 0 and not roadWays[wayID]["oneWay"]:
@@ -208,6 +214,25 @@ func _ready() -> void:
 			
 			if nodeIndex + 1 <= listOfNodesInWay.size() - 1:
 				roadNodes[nodeID]["adjacentNodes"].append(listOfNodesInWay[nodeIndex + 1])
+				
+			roadNodes[nodeID]["parentWay"].append(newRoadInfoDictionary)
+			
+		# Calculating the base cost of moving inside this way
+		var wayCapacity: int = 0
+		var baseCost: int = 0
+		
+		if roadWays[wayID]["lanes"] / 2 != 0:
+			wayCapacity = 500 * (roadWays[wayID]["lanes"] / 2) * (roadWays[wayID]["speedLimit"] / 4)
+			baseCost = 500 / roadWays[wayID]["speedLimit"] / (roadWays[wayID]["lanes"] / 2)
+			
+		else:
+			wayCapacity = 500 * (roadWays[wayID]["lanes"]) * (roadWays[wayID]["speedLimit"] / 4)
+			baseCost = 500 / roadWays[wayID]["speedLimit"] / (roadWays[wayID]["lanes"])
+		
+		roadWays[wayID]["wayCapacity"] = wayCapacity
+		roadWays[wayID]["baseMovementCost"] = baseCost
+		
+		
 					
 	# -----------------------------------------------------------------------------------------------------------------------------------------------------
 	# Loading the Buildings
@@ -227,22 +252,26 @@ func _ready() -> void:
 			"house", "apartments", "dormitory":
 				newBuilding = get_node("../BuildingAssets/residential").duplicate()
 				placeInfo = residentialInfoDictionary.duplicate(true)
+				residentialBuildings[buildingCount] = placeInfo
 			"roof":
 				newBuilding = get_node("../BuildingAssets/place").duplicate()
 				placeInfo = placeInfoDictionary.duplicate(true)
+				miscBuildings[buildingCount] = placeInfo
 			_:
 				newBuilding = get_node("../BuildingAssets/workplace").duplicate()
 				placeInfo = workplaceInfoDictionary.duplicate(true)
+				workplaceBuildings[buildingCount] = placeInfo
 				
 		# Moving the building to a place near it's real position
 		var randomBuildingNode = ImportedData.buildingNodeData[buildingWay["nodes"][0]]
-		var globalBuildingPosition = Vector2(randomBuildingNode["X"], randomBuildingNode["Y"])
+		var globalBuildingPosition = randomBuildingNode["position"]
 		newBuilding.set_global_position(globalBuildingPosition)
 		
 		# Creating the click detection zone for the building
 		var newClickZone = CollisionPolygon2D.new()
 		newClickZone.name = "Buildings|" + str(buildingCount)
 		newClickZone.set_global_position(globalBuildingPosition)
+		newClickZone.set_meta("pairedSelection", placeInfo)
 		newClickZone.z_index = 50
 		
 		# Drawing the buildings shape
@@ -250,24 +279,20 @@ func _ready() -> void:
 		var arrayOfVectors = []
 		for nodeID in buildingWay["nodes"]:
 			var node = ImportedData.buildingNodeData[nodeID]
-			var currentVector = Vector2(node.X, node.Y) - globalBuildingPosition
+			var currentVector = node["position"] - globalBuildingPosition
 			arrayOfVectors.append(currentVector)
 		buildingShape.set_polygon(arrayOfVectors)
 		newClickZone.set_polygon(arrayOfVectors)
 		ClickingDetection.add_child(newClickZone)
 		
-		# Potentially edit this to be based of node position instead of road position. This would mean that nodes need to know what Ways their apart of.
-		# Finding the nearest road to set as the access road
+		# Finding the nearest node to set as the access node
 		if buildingType != "roof":
 			var closestDistance: float = 1000000
-			for roadID in roadWays:
-				var placePosition: Vector2 = globalBuildingPosition
-				var roadPosition: Vector2 = roadWays[str(roadID)]["globalPosition"]
-				var distanceFound: float = placePosition.distance_squared_to(roadPosition)
-				
+			for node in roadNodes.values():
+				var distanceFound: float = globalBuildingPosition.distance_squared_to(node["position"])
 				if distanceFound < closestDistance:
 					closestDistance = distanceFound
-					placeInfo["accessRoad"] = roadWays[str(roadID)]["id"]
+					placeInfo["accessNode"] = node["id"]
 		
 		# Setting non-building specific meta data
 		newBuilding.name = str(buildingCount)
@@ -280,7 +305,6 @@ func _ready() -> void:
 		newBuilding.visible = true
 		
 		# Adding buildings to the building node
-		buildingWays[str(buildingCount)] = placeInfo
 		buildingsNode.add_child(newBuilding)
 		
 	# Removing the imported data node as it is no longer needed
@@ -306,7 +330,7 @@ func laneLineConstructorEven(newRoad : Node2D, laneBeingConstructed : Line2D, la
 	# Adding the points for the line
 	for nodeID in listOfNodes:
 		var node = roadNodes[nodeID]
-		var currentVector = Vector2(node.X, node.Y) - globalRoadPosition
+		var currentVector = node["position"] - globalRoadPosition
 		laneBeingConstructed.add_point(currentVector)
 	
 	# Sorting out the width of the line and Zindex
