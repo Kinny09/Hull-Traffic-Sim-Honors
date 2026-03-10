@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://dwl0im38iqcjv"]
+[gd_scene load_steps=13 format=3 uid="uid://dwl0im38iqcjv"]
 
 [ext_resource type="Script" uid="uid://l2eeeqvrge33" path="res://scenes/HTTPRequestScript.gd" id="1_3p1jw"]
 [ext_resource type="Script" uid="uid://d1c7oo7tknvjn" path="res://scenes/DebuggingToolsScript.gd" id="1_83pfb"]
+[ext_resource type="Script" uid="uid://cqjc5eo1b43hc" path="res://scenes/timer.gd" id="1_khgle"]
 [ext_resource type="Script" uid="uid://b5uv4qmddijd0" path="res://scenes/JSONConverterScript.gd" id="1_wpefv"]
 [ext_resource type="Script" uid="uid://2flrxgrg56fs" path="res://scenes/AssetConstructorScript.gd" id="1_y5vwh"]
 [ext_resource type="Script" uid="uid://do8oexu5u5e6q" path="res://scenes/trafficSimulationScript.gd" id="4_it44y"]
@@ -13,6 +14,9 @@
 [ext_resource type="PackedScene" uid="uid://cg6ndwf2gjjop" path="res://scenes/simulation_ui.tscn" id="7_v0ioj"]
 
 [node name="Simulation" type="Node2D"]
+
+[node name="Timer" type="Node" parent="."]
+script = ExtResource("1_khgle")
 
 [node name="DebuggingTools" type="Node" parent="."]
 script = ExtResource("1_83pfb")

@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://cg6ndwf2gjjop"]
+[gd_scene load_steps=6 format=3 uid="uid://cg6ndwf2gjjop"]
 
 [ext_resource type="Script" uid="uid://d87vurja0aoo" path="res://scenes/popupMenuControllerScript.gd" id="1_wmj72"]
+[ext_resource type="Script" uid="uid://dcfxx7vtw1np5" path="res://scenes/loading_screen.gd" id="2_a0so0"]
+[ext_resource type="Script" uid="uid://c4big62xtijmx" path="res://scenes/date_controller.gd" id="2_koc25"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_koc25"]
+
+[sub_resource type="Theme" id="Theme_x08wq"]
+Panel/styles/panel = SubResource("StyleBoxFlat_koc25")
 
 [node name="SimulationUI" type="Control"]
 layout_mode = 3
@@ -10,6 +17,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = SubResource("Theme_x08wq")
 
 [node name="PopupMenu" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -23,6 +31,7 @@ grow_vertical = 2
 
 [node name="PopupMenuController" type="Control" parent="PopupMenu"]
 layout_mode = 2
+mouse_filter = 1
 script = ExtResource("1_wmj72")
 
 [node name="SelectionInfoBox" type="MarginContainer" parent="PopupMenu"]
@@ -47,3 +56,80 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="DateContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 230.0
+offset_bottom = 78.0
+
+[node name="Background" type="Panel" parent="DateContainer"]
+layout_mode = 2
+
+[node name="DateController" type="MarginContainer" parent="DateContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("2_koc25")
+
+[node name="Dates" type="VBoxContainer" parent="DateContainer/DateController"]
+layout_mode = 2
+
+[node name="Date" type="Label" parent="DateContainer/DateController/Dates"]
+layout_mode = 2
+text = "01/01/2025"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Seperator" type="HSeparator" parent="DateContainer/DateController/Dates"]
+layout_mode = 2
+
+[node name="Timer" type="Label" parent="DateContainer/DateController/Dates"]
+layout_mode = 2
+text = "00:00 + 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Controls" type="HBoxContainer" parent="DateContainer/DateController/Dates"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+
+[node name="Reverse" type="Button" parent="DateContainer/DateController/Dates/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "<---
+"
+
+[node name="PauseAndPlay" type="Button" parent="DateContainer/DateController/Dates/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Play
+"
+
+[node name="Forward" type="Button" parent="DateContainer/DateController/Dates/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "--->
+"
+
+[node name="LoadingScreen" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_a0so0")
+
+[node name="Label" type="Label" parent="LoadingScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Loading..."
+horizontal_alignment = 1
+vertical_alignment = 1
