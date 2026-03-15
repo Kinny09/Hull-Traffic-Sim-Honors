@@ -149,13 +149,12 @@ vertical_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/MarginContainer/VBoxContainer"]
 layout_mode = 2
-indeterminate = true
-editor_preview_indeterminate = false
+max_value = 1.0
 
 [node name="Status" type="Label" parent="LoadingScreen/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Sending API Calls and Getting Data..."
+text = "Loading..."
 horizontal_alignment = 1
 vertical_alignment = 1
 

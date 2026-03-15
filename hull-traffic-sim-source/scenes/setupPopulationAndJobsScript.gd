@@ -100,4 +100,4 @@ func _ready() -> void:
 				numberOfResidenceToGiveJobsTo -= numberOfOpenJobsForCurrentBuilding
 				workplaceIndex += 1
 				
-	#BUILDINGS_POPULATED.emit()
+	BUILDINGS_POPULATED.emit()

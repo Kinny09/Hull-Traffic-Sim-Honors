@@ -6,6 +6,8 @@ extends Node
 
 ## Member Variables 
 var tableOfODPairs: Array[ODPair] = []
+var thread: Thread
+var progressCount: int = 0
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Main
@@ -29,8 +31,17 @@ func _ready() -> void:
 			tableOfODPairs.append(newODPair)
 			residentialBuilding["originDestinationPairs"].append(newODPair)
 	
-	var count: int = 0
-	#Finding the path each OD pair takes and adding congestion to it
+	#Finding the path each OD pair takes and adding congestion to it	
+	thread = Thread.new()
+	thread.start(initalize_the_paths_thread.bind())
+
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
+# Thread Stuff
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+func initalize_the_paths_thread():
+	#var count: int = 0
 	for ODPairToPathFindFor in tableOfODPairs:
 		var pathFound = a_star_pathfind(ODPairToPathFindFor, true) 
 		if pathFound.size() > 0:
@@ -38,8 +49,11 @@ func _ready() -> void:
 			add_congestion_to_ways(ODPairToPathFindFor)
 		elif pathFound.size() <= 0:
 			ODPairToPathFindFor.routeNodes = pathFound
-		count += 1
-		print(str(count) + "/" + str(tableOfODPairs.size()))
+		progressCount += 1
+
+# Thread must be disposed (or "joined"), for portability.
+func _exit_tree():
+	thread.wait_to_finish()
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Functions
