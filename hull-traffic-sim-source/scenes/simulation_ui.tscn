@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cg6ndwf2gjjop"]
+[gd_scene load_steps=7 format=3 uid="uid://cg6ndwf2gjjop"]
 
 [ext_resource type="Script" uid="uid://d87vurja0aoo" path="res://scenes/popupMenuControllerScript.gd" id="1_wmj72"]
 [ext_resource type="Script" uid="uid://dcfxx7vtw1np5" path="res://scenes/loading_screen.gd" id="2_a0so0"]
 [ext_resource type="Script" uid="uid://c4big62xtijmx" path="res://scenes/date_controller.gd" id="2_koc25"]
+[ext_resource type="Script" uid="uid://cq8jfsc24rrvq" path="res://scenes/control_panel_controller.gd" id="4_3srwj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_koc25"]
 
@@ -115,6 +116,7 @@ text = "--->
 
 [node name="LoadingScreen" type="Panel" parent="."]
 visible = false
+z_index = 5
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -123,13 +125,69 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_a0so0")
 
-[node name="Label" type="Label" parent="LoadingScreen"]
+[node name="MarginContainer" type="MarginContainer" parent="LoadingScreen"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 300
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 300
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LoadingScreen/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="LoadingLabel" type="Label" parent="LoadingScreen/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
 text = "Loading..."
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/MarginContainer/VBoxContainer"]
+layout_mode = 2
+indeterminate = true
+editor_preview_indeterminate = false
+
+[node name="Status" type="Label" parent="LoadingScreen/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Sending API Calls and Getting Data..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ControlPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+offset_right = 169.0
+grow_vertical = 0
+
+[node name="ControlPanelController" type="Control" parent="ControlPanel"]
+layout_mode = 2
+script = ExtResource("4_3srwj")
+
+[node name="ControlPanelHider" type="FoldableContainer" parent="ControlPanel"]
+layout_mode = 2
+folded = true
+title = "Show Map Toggles"
+title_position = 1
+
+[node name="HeatmapToggle" type="HBoxContainer" parent="ControlPanel/ControlPanelHider"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ControlPanel/ControlPanelHider/HeatmapToggle"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "Show Heatmap:"
+
+[node name="CheckButton" type="CheckButton" parent="ControlPanel/ControlPanelHider/HeatmapToggle"]
+layout_mode = 2
+size_flags_horizontal = 3

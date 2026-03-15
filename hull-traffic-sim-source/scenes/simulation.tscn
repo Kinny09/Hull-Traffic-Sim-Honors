@@ -40,7 +40,8 @@ script = ExtResource("1_3p1jw")
 [node name="TrafficSimulation" type="Node" parent="."]
 script = ExtResource("4_it44y")
 
-[node name="TrafficHeatMap" type="Node" parent="TrafficSimulation"]
+[node name="TrafficHeatMap" type="Node2D" parent="TrafficSimulation"]
+visible = false
 script = ExtResource("5_khgle")
 
 [node name="Camera2D" type="Camera2D" parent="."]
