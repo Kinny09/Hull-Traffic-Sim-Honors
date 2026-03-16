@@ -15,7 +15,7 @@ const SECONDS_IN_WEEK: int = 7 * 24 * 60 * 60
 ## Member Variables
 var timeBetweenUpdates = 1
 var currentlyRunning = false
-var secondToAddToTime = SECONDS_IN_MINUTES
+var secondToAddToTime = 1
 
 ## Signal used to keep in contact with the UI
 signal TIME_CHANGED(newTime: Dictionary, secondBeingAddedToTime: int)

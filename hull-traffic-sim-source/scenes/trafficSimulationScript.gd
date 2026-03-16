@@ -9,6 +9,9 @@ var tableOfODPairs: Array[ODPair] = []
 var thread: Thread
 var progressCount: int = 0
 
+## Signals
+signal TRAFFIC_SIMULATION_INITALIZATION_COMPLETE
+
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Main
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,8 +37,7 @@ func _ready() -> void:
 	#Finding the path each OD pair takes and adding congestion to it	
 	thread = Thread.new()
 	thread.start(initalize_the_paths_thread.bind())
-
-
+	
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Thread Stuff
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -50,10 +52,14 @@ func initalize_the_paths_thread():
 		elif pathFound.size() <= 0:
 			ODPairToPathFindFor.routeNodes = pathFound
 		progressCount += 1
+	call_thread_safe("finished_simulation_initilization")
 
 # Thread must be disposed (or "joined"), for portability.
 func _exit_tree():
 	thread.wait_to_finish()
+	
+func finished_simulation_initilization():
+	TRAFFIC_SIMULATION_INITALIZATION_COMPLETE.emit()
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Functions

@@ -8,7 +8,7 @@ extends MarginContainer
 
 ## Defining Important Constants
 const DATE_STRING_FORMAT: String = "%02d/%02d/%s"
-const TIME_STRING_FORMAT: String = "%02d:%02d + %s"
+const TIME_STRING_FORMAT: String = "%02d:%02d:%02d + %s"
 
 ## Signals
 signal TIMER_BUTTON_PRESSED(buttonPressed: String)
@@ -24,9 +24,9 @@ func _ready():
 
 ## Gets fired every time the time changes, it then updates the timer labels to the new dates and times
 func updateTimer(newTime, secondBeingAdded):
-	var differenceInMinutes: int = secondBeingAdded / 60
+	var differenceInSeconds: int = secondBeingAdded
 	var dateString: String = DATE_STRING_FORMAT % [newTime["day"], newTime["month"], newTime["year"]]
-	var timeString: String = TIME_STRING_FORMAT % [newTime["hour"], newTime["minute"], differenceInMinutes]
+	var timeString: String = TIME_STRING_FORMAT % [newTime["hour"], newTime["minute"], newTime["second"], differenceInSeconds]
 	DateLabel.text = dateString
 	TimeLabel.text = timeString
 
