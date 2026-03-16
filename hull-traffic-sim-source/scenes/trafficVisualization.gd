@@ -17,7 +17,6 @@ func _ready() -> void:
 	tableOfODPairs = TrafficSimulation.tableOfODPairs
 	
 	# Initalizing the Agents 
-	var totalNumberOfAgents: int = 0
 	for odPair in tableOfODPairs:
 		if odPair.routeNodes.size() > 0:
 			for count in odPair.agentsUsing:
@@ -26,20 +25,17 @@ func _ready() -> void:
 				arrayOfAgents.append(newAgent)
 				add_child(newAgent.agentAsset)
 				newAgent.agentAsset.visible = true
-	print(totalNumberOfAgents)
 	
 	# Connecting the timer and the updateVisulization function
 	SimulationTimer.TIME_CHANGED.connect(updateVisulization)
 
-func updateVisulization(_newTime: Dictionary, secondBeingAddedToTime: int):
+func updateVisulization(_newTime: Dictionary, timeBetweenUpdates: float):
 	for agent in arrayOfAgents:
 		if agent.pathToTake.size() > 0:
-			agent.moveAgentToNextNode(secondBeingAddedToTime)
+			agent.moveAgentToNextNode(timeBetweenUpdates)
 		else:
 			agent.agentAsset.visible = false
 		
-		
-
 ## A class representing an Agent
 class Agent:
 	extends Node2D
@@ -63,19 +59,19 @@ class Agent:
 		var B = rng.randf_range(0.0, 1.0)
 		agentAsset.color = Color(R, G, B, 1)
 		
-	func moveAgentToNextNode(speedMultiplier: int):
+	func moveAgentToNextNode(timeBetweenUpdates: float):
 		var currentPosition: Vector2 = agentAsset.global_position
 		var tweener: Tween = agentAsset.get_tree().create_tween()
 		var speedLimitOfWay = nextNode["parentWay"][0]["speedLimit"]
-		var agentSpeed: float = (speedLimitOfWay / 10) * speedMultiplier
+		var agentSpeed: float = (speedLimitOfWay / 10)
 		
 		if currentPosition != nextNode["position"]:
 			var positionToMoveTo = currentPosition.move_toward(nextNode["position"], agentSpeed)
-			tweener.tween_property(agentAsset, "global_position", positionToMoveTo, 1.0)
+			tweener.tween_property(agentAsset, "global_position", positionToMoveTo, timeBetweenUpdates)
 			
 		elif currentPosition == nextNode["position"]:
 			nextNode = pathToTake.pop_back()
 			var positionToMoveTo = currentPosition.move_toward(nextNode["position"], agentSpeed)
-			tweener.tween_property(agentAsset, "global_position", positionToMoveTo, 1.0)
+			tweener.tween_property(agentAsset, "global_position", positionToMoveTo, timeBetweenUpdates)
 			var nextNodeAngle: float = currentPosition.angle_to_point(nextNode["position"])
 			agentAsset.rotation = nextNodeAngle

@@ -86,10 +86,20 @@ vertical_alignment = 1
 [node name="Seperator" type="HSeparator" parent="DateContainer/DateController/Dates"]
 layout_mode = 2
 
-[node name="Timer" type="Label" parent="DateContainer/DateController/Dates"]
+[node name="TimerHolder" type="HBoxContainer" parent="DateContainer/DateController/Dates"]
 layout_mode = 2
-text = "00:00 + 1"
-horizontal_alignment = 1
+
+[node name="Timer" type="Label" parent="DateContainer/DateController/Dates/TimerHolder"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "00:00"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpeedArrow" type="Label" parent="DateContainer/DateController/Dates/TimerHolder"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "->"
 vertical_alignment = 1
 
 [node name="Controls" type="HBoxContainer" parent="DateContainer/DateController/Dates"]

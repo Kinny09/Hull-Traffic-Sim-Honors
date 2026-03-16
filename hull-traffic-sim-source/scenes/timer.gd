@@ -13,12 +13,13 @@ const SECONDS_IN_DAY: int = 24 * 60 * 60
 const SECONDS_IN_WEEK: int = 7 * 24 * 60 * 60
 
 ## Member Variables
-var timeBetweenUpdates = 1
+var timeBetweenUpdates: float = 1
 var currentlyRunning = false
 var secondToAddToTime = 1
 
 ## Signal used to keep in contact with the UI
-signal TIME_CHANGED(newTime: Dictionary, secondBeingAddedToTime: int)
+signal TIME_CHANGED(newTime: Dictionary, secondsBetweenTimerUpdates: float)
+signal TIME_SPEED_CHANGED(secondsBetweenTimerUpdates: float)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -31,9 +32,9 @@ func _ready() -> void:
 func updateTimerState(buttonPressed):
 	match buttonPressed:
 		"Reverse":
-			if secondToAddToTime > 1:
-				secondToAddToTime /= 2
-				TIME_CHANGED.emit(dateDictionary, secondToAddToTime)
+			if timeBetweenUpdates < 2:
+				timeBetweenUpdates *= 2
+				TIME_SPEED_CHANGED.emit(timeBetweenUpdates)
 			
 		"PauseAndPlay":
 			if currentlyRunning:
@@ -43,14 +44,14 @@ func updateTimerState(buttonPressed):
 				runTheTimer()
 			
 		"Forward":
-			if secondToAddToTime < 16:
-				secondToAddToTime *= 2
-				TIME_CHANGED.emit(dateDictionary, secondToAddToTime)
+			if timeBetweenUpdates > 0.125:
+				timeBetweenUpdates /= 2
+				TIME_SPEED_CHANGED.emit(timeBetweenUpdates)
 			
 func runTheTimer():
 	while currentlyRunning:
 		unixDateTime += secondToAddToTime
 		dateDictionary = Time.get_datetime_dict_from_unix_time(unixDateTime)
-		TIME_CHANGED.emit(dateDictionary, secondToAddToTime)
+		TIME_CHANGED.emit(dateDictionary, timeBetweenUpdates)
 		await get_tree().create_timer(timeBetweenUpdates).timeout
 	
