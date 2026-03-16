@@ -31,8 +31,9 @@ func _ready() -> void:
 func updateTimerState(buttonPressed):
 	match buttonPressed:
 		"Reverse":
-			secondToAddToTime -= SECONDS_IN_MINUTES
-			TIME_CHANGED.emit(dateDictionary, secondToAddToTime)
+			if secondToAddToTime > 1:
+				secondToAddToTime /= 2
+				TIME_CHANGED.emit(dateDictionary, secondToAddToTime)
 			
 		"PauseAndPlay":
 			if currentlyRunning:
@@ -42,8 +43,9 @@ func updateTimerState(buttonPressed):
 				runTheTimer()
 			
 		"Forward":
-			secondToAddToTime += SECONDS_IN_MINUTES
-			TIME_CHANGED.emit(dateDictionary, secondToAddToTime)
+			if secondToAddToTime < 16:
+				secondToAddToTime *= 2
+				TIME_CHANGED.emit(dateDictionary, secondToAddToTime)
 			
 func runTheTimer():
 	while currentlyRunning:

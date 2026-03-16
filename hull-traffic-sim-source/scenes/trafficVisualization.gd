@@ -31,10 +31,10 @@ func _ready() -> void:
 	# Connecting the timer and the updateVisulization function
 	SimulationTimer.TIME_CHANGED.connect(updateVisulization)
 
-func updateVisulization(_newTime: Dictionary, _secondBeingAddedToTime: int):
+func updateVisulization(_newTime: Dictionary, secondBeingAddedToTime: int):
 	for agent in arrayOfAgents:
 		if agent.pathToTake.size() > 0:
-			agent.moveAgentToNextNode()
+			agent.moveAgentToNextNode(secondBeingAddedToTime)
 		else:
 			agent.agentAsset.visible = false
 		
@@ -63,11 +63,11 @@ class Agent:
 		var B = rng.randf_range(0.0, 1.0)
 		agentAsset.color = Color(R, G, B, 1)
 		
-	func moveAgentToNextNode():
+	func moveAgentToNextNode(speedMultiplier: int):
 		var currentPosition: Vector2 = agentAsset.global_position
 		var tweener: Tween = agentAsset.get_tree().create_tween()
 		var speedLimitOfWay = nextNode["parentWay"][0]["speedLimit"]
-		var agentSpeed: float = speedLimitOfWay / 10
+		var agentSpeed: float = (speedLimitOfWay / 10) * speedMultiplier
 		
 		if currentPosition != nextNode["position"]:
 			var positionToMoveTo = currentPosition.move_toward(nextNode["position"], agentSpeed)
