@@ -36,6 +36,8 @@ func updateTimer(newTime, _secondBeingAdded):
 	
 func timerSpeedChanged(newTimerSpeed):
 	match newTimerSpeed:
+		0.0625:
+			speedString = "----->"
 		0.125:
 			speedString = "---->"
 		0.25:

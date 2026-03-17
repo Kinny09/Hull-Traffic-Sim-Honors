@@ -44,7 +44,7 @@ func updateTimerState(buttonPressed):
 				runTheTimer()
 			
 		"Forward":
-			if timeBetweenUpdates > 0.125:
+			if timeBetweenUpdates > 0.0625:
 				timeBetweenUpdates /= 2
 				TIME_SPEED_CHANGED.emit(timeBetweenUpdates)
 			
