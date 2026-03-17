@@ -21,8 +21,10 @@ func _ready() -> void:
 	for odPair in tableOfODPairs:
 		if odPair.routeNodes.size() > 0:
 			var pathToTake = odPair.routeNodes.duplicate()
-			var odPairWorkTime: String = "%s:%s:%s" % [odPair.workTime.hours, odPair.workTime.minutes, odPair.workTime.seconds]
-			var odPairHomeTime: String = "%s:%s:%s" % [odPair.homeTime.hours, odPair.homeTime.minutes, odPair.homeTime.seconds]
+			var rng = RandomNumberGenerator.new()
+			var randomSecondsOffset = rng.randi_range(0, 59)
+			var odPairWorkTime: String = "%s:%s:%s" % [odPair.workTime.hours, odPair.workTime.minutes, randomSecondsOffset]
+			var odPairHomeTime: String = "%s:%s:%s" % [odPair.homeTime.hours, odPair.homeTime.minutes, randomSecondsOffset]
 		
 			for count in odPair.agentsUsing:		
 				if pathToTake.duplicate().pop_front() == null:

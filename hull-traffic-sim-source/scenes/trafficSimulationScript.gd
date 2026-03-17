@@ -29,8 +29,11 @@ func _ready() -> void:
 			var destinationID: String = str(workplace["accessNode"])
 			var destination: Dictionary = Roads["roadNodes"][int(destinationID)]
 			var initalNumberOfAgents: int = residentialBuilding["workplaces"][workplaceID]
-			var workTime = TimeOnly.new(0,1,0)
-			var homeTime = TimeOnly.new(0,13,0)
+			
+			var rng = RandomNumberGenerator.new()
+			var randomMinuteOffset = rng.randi_range(0, 10)
+			var workTime = TimeOnly.new(6,49 + randomMinuteOffset,0)
+			var homeTime = TimeOnly.new(7,30 + randomMinuteOffset,0)
 			var newODPair = ODPair.new(origin, destination, workTime, homeTime)
 			newODPair.agentsUsing = initalNumberOfAgents
 			tableOfODPairs.append(newODPair)
