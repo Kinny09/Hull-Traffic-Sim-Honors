@@ -25,9 +25,11 @@ signal TIME_SPEED_CHANGED(secondsBetweenTimerUpdates: float)
 func _ready() -> void:
 	# Connecting to the timer UI
 	TimerController.TIMER_BUTTON_PRESSED.connect(updateTimerState)
+	TimerController.TIMER_EDITED.connect(updateTime)
 	
 	# Initalizing the date
 	dateDictionary = Time.get_datetime_dict_from_unix_time(unixDateTime)
+	TIME_CHANGED.emit(dateDictionary, timeBetweenUpdates)
 
 func updateTimerState(buttonPressed):
 	match buttonPressed:
@@ -54,4 +56,9 @@ func runTheTimer():
 		dateDictionary = Time.get_datetime_dict_from_unix_time(unixDateTime)
 		TIME_CHANGED.emit(dateDictionary, timeBetweenUpdates)
 		await get_tree().create_timer(timeBetweenUpdates).timeout
+		
+func updateTime(newTime):
+	unixDateTime = Time.get_unix_time_from_datetime_dict(newTime)
+	dateDictionary = Time.get_datetime_dict_from_unix_time(unixDateTime)
+	TIME_CHANGED.emit(dateDictionary, timeBetweenUpdates)
 	

@@ -1,14 +1,70 @@
-[gd_scene load_steps=7 format=3 uid="uid://cg6ndwf2gjjop"]
+[gd_scene load_steps=21 format=3 uid="uid://cg6ndwf2gjjop"]
 
 [ext_resource type="Script" uid="uid://d87vurja0aoo" path="res://scenes/popupMenuControllerScript.gd" id="1_wmj72"]
 [ext_resource type="Script" uid="uid://dcfxx7vtw1np5" path="res://scenes/loading_screen.gd" id="2_a0so0"]
 [ext_resource type="Script" uid="uid://c4big62xtijmx" path="res://scenes/date_controller.gd" id="2_koc25"]
 [ext_resource type="Script" uid="uid://cq8jfsc24rrvq" path="res://scenes/control_panel_controller.gd" id="4_3srwj"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_koc25"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3srwj"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_3srwj"]
+size = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_43nqj"]
+size = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_r5r5w"]
+size = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_x06av"]
+size = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_r17md"]
+size = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_hgbty"]
+size = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ktu2t"]
+size = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fgao7"]
+size = Vector2(0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ehn1c"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wjb84"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yt25b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hc060"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vi10e"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5dop1"]
 
 [sub_resource type="Theme" id="Theme_x08wq"]
-Panel/styles/panel = SubResource("StyleBoxFlat_koc25")
+default_font_size = 0
+LineEdit/colors/font_uneditable_color = Color(1, 1, 1, 1)
+Panel/styles/panel = SubResource("StyleBoxFlat_3srwj")
+SpinBox/constants/buttons_vertical_separation = 0
+SpinBox/constants/buttons_width = 0
+SpinBox/constants/field_and_buttons_separation = 0
+SpinBox/constants/set_min_buttons_width_from_icons = 0
+SpinBox/icons/down = SubResource("PlaceholderTexture2D_3srwj")
+SpinBox/icons/down_disabled = SubResource("PlaceholderTexture2D_43nqj")
+SpinBox/icons/down_hover = SubResource("PlaceholderTexture2D_r5r5w")
+SpinBox/icons/down_pressed = SubResource("PlaceholderTexture2D_x06av")
+SpinBox/icons/up = SubResource("PlaceholderTexture2D_r17md")
+SpinBox/icons/up_disabled = SubResource("PlaceholderTexture2D_hgbty")
+SpinBox/icons/up_hover = SubResource("PlaceholderTexture2D_ktu2t")
+SpinBox/icons/up_pressed = SubResource("PlaceholderTexture2D_fgao7")
+SpinBox/styles/down_background = SubResource("StyleBoxFlat_ehn1c")
+SpinBox/styles/down_background_disabled = SubResource("StyleBoxFlat_wjb84")
+SpinBox/styles/field_and_buttons_separator = SubResource("StyleBoxFlat_yt25b")
+SpinBox/styles/up_background = SubResource("StyleBoxFlat_hc060")
+SpinBox/styles/up_background_disabled = SubResource("StyleBoxFlat_vi10e")
+SpinBox/styles/up_down_buttons_separator = SubResource("StyleBoxFlat_5dop1")
 
 [node name="SimulationUI" type="Control"]
 layout_mode = 3
@@ -17,6 +73,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.999373, 1)
 mouse_filter = 2
 theme = SubResource("Theme_x08wq")
 
@@ -60,8 +117,8 @@ grow_vertical = 0
 
 [node name="DateContainer" type="PanelContainer" parent="."]
 layout_mode = 0
-offset_right = 230.0
-offset_bottom = 78.0
+offset_right = 290.0
+offset_bottom = 121.0
 
 [node name="Background" type="Panel" parent="DateContainer"]
 layout_mode = 2
@@ -88,17 +145,51 @@ layout_mode = 2
 
 [node name="TimerHolder" type="HBoxContainer" parent="DateContainer/DateController/Dates"]
 layout_mode = 2
+theme_override_constants/separation = 2
 
-[node name="Timer" type="Label" parent="DateContainer/DateController/Dates/TimerHolder"]
+[node name="Hours" type="LineEdit" parent="DateContainer/DateController/Dates/TimerHolder"]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "00:00:00"
-horizontal_alignment = 2
-vertical_alignment = 1
+size_flags_horizontal = 4
+text = "00"
+alignment = 1
+max_length = 2
+context_menu_enabled = false
+emoji_menu_enabled = false
+virtual_keyboard_type = 2
+drag_and_drop_selection_enabled = false
+
+[node name="TimeDivider" type="Label" parent="DateContainer/DateController/Dates/TimerHolder"]
+layout_mode = 2
+text = ":"
+
+[node name="Minutes" type="LineEdit" parent="DateContainer/DateController/Dates/TimerHolder"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "00"
+alignment = 1
+max_length = 2
+context_menu_enabled = false
+emoji_menu_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="TimeDivider2" type="Label" parent="DateContainer/DateController/Dates/TimerHolder"]
+layout_mode = 2
+text = ":"
+
+[node name="Seconds" type="LineEdit" parent="DateContainer/DateController/Dates/TimerHolder"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "00"
+alignment = 1
+max_length = 2
+context_menu_enabled = false
+emoji_menu_enabled = false
+drag_and_drop_selection_enabled = false
 
 [node name="SpeedArrow" type="Label" parent="DateContainer/DateController/Dates/TimerHolder"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
 text = "->"
 vertical_alignment = 1
 
