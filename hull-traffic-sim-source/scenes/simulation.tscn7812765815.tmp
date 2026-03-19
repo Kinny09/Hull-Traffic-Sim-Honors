@@ -48,14 +48,6 @@ script = ExtResource("5_khgle")
 [node name="TrafficVisualization" type="Node2D" parent="TrafficSimulation"]
 script = ExtResource("7_iuyha")
 
-[node name="CarAsset" type="Polygon2D" parent="TrafficSimulation"]
-visible = false
-z_index = 200
-position = Vector2(-3, 1)
-scale = Vector2(0.125, 0.6)
-color = Color(0.92941177, 0.25882354, 0.92941177, 1)
-polygon = PackedVector2Array(-8, 0, -8, -1.6666666, 8, -1.6666666, 8, 0)
-
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("4_ypxof")
 

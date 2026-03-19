@@ -2,14 +2,19 @@ extends Node
 
 ## Getting the necessary nodes
 @onready var Roads = $"../../Roads"
+@onready var ControlPanelController = $"../../UILayer/SimulationUI/ControlPanel/ControlPanelController"
 
-# Member variables
+## Member variables
 var updateHeatMapThread: Thread
 var tableOfHeatMapAssets: Array[HeatMapHelper] = []
-var updateTimer: int = 2 # Replace this with a signal from the traffic simulation that fires every time it updates
+var heatMapViewable: bool = false
 
 ## Main
 func _ready() -> void:
+	# Connecting the toggle button signal
+	ControlPanelController.HEATMAP_BUTTON_TOGGLED.connect(ToggleHeatMapOnAndOff)
+	
+	# Initalizing
 	await Roads.ASSETS_CONSTRUCTED # Waiting for the assets to be constructed
 	
 	# Initalizing the heatmap assets
@@ -24,11 +29,6 @@ func _ready() -> void:
 		newHeatMapHelper.wayCapacity = newHeatMapHelper.roadInfo["wayCapacity"]
 		add_child(newHeatMapHelper.heatMapAsset)
 		tableOfHeatMapAssets.append(newHeatMapHelper)
-		
-	while true:
-		await get_tree().create_timer(updateTimer).timeout # Replace this with a signal from the traffic simulation that fires every time it updates
-		UpdateHeatMap()
-		
 	
 func UpdateHeatMap() -> void:
 	# Updating the congestion values
@@ -47,7 +47,14 @@ func UpdateHeatMap() -> void:
 		var redChannel: float = float(heatMapHelperToCheck.congestion) / float(heatMapHelperToCheck.wayCapacity)
 		var greenChannel: float = redChannelBaseline - redChannel
 		heatMapHelperToCheck.heatMapAsset.set_default_color(Color(redChannel, greenChannel, 0, 0.3))	
-	
+
+func ToggleHeatMapOnAndOff(toggleStatus: bool):
+	if toggleStatus:
+		UpdateHeatMap()
+		self.visible = true
+	else:
+		self.visible = false
+
 ## An inner class for each way that helps with handling the heat map
 class HeatMapHelper:
 	var heatMapAsset: Line2D 

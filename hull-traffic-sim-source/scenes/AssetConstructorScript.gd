@@ -28,13 +28,14 @@ var roadInfoDictionary: Dictionary[String, Variant] = {
 	"globalPosition": Vector2(0,0),
 	"baseMovementCost": 0,
 	"congestion": 0.0,
-	"wayCapacity": 0.0
+	"wayCapacity": 0.0,
 }
 var placeInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
 	"buildingID": 0,
 	"nodes": [],
-	"globalPosition": Vector2(0,0)
+	"globalPosition": Vector2(0,0),
+	"originDestinationPairs": {}
 }
 var residentialInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
@@ -43,7 +44,8 @@ var residentialInfoDictionary: Dictionary[String, Variant] = {
 	"accessNode": 0,
 	"numberOfResidents": 0,
 	"workplaces": {},
-	"globalPosition": Vector2(0,0)
+	"globalPosition": Vector2(0,0),
+	"originDestinationPairs": {}
 }
 var workplaceInfoDictionary: Dictionary[String, Variant] = {
 	"buildingType": "",
@@ -52,7 +54,8 @@ var workplaceInfoDictionary: Dictionary[String, Variant] = {
 	"accessNode": 0,
 	"employmentCapacity": 0,
 	"numberOfEmployees": 0,
-	"globalPosition": Vector2(0,0)
+	"globalPosition": Vector2(0,0),
+	"originDestinationPairs": {}
 }
 var globalRoadPosition = Vector2(0,0)
 
