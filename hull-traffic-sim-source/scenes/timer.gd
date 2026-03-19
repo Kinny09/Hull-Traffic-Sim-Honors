@@ -2,6 +2,7 @@ extends Node
 
 ## Node Paths
 @onready var TimerController = $"../UILayer/SimulationUI/DateContainer/DateController"
+@onready var RoadsNode = $"../Roads"
 
 ## Member Variables
 var unixDateTime: int = Time.get_unix_time_from_datetime_string("2026-01-01T06:48:00")
@@ -23,6 +24,8 @@ signal TIME_SPEED_CHANGED(secondsBetweenTimerUpdates: float)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	await RoadsNode.ASSETS_CONSTRUCTED # Waiting for the assets to be constructed
+	
 	# Connecting to the timer UI
 	TimerController.TIMER_BUTTON_PRESSED.connect(updateTimerState)
 	TimerController.TIMER_EDITED.connect(updateTime)

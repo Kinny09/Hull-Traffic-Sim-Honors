@@ -3,12 +3,12 @@ extends MarginContainer
 ## Important Nodes
 @onready var TimerNode = $"../../../../Timer"
 @onready var DateLabel = $Dates/Date
-#@onready var TimeLabel = $Dates/TimerHolder/Timer
 @onready var SpeedLabel = $Dates/TimerHolder/SpeedArrow
 @onready var Buttons = $Dates/Controls
 @onready var HoursTextEdit = $Dates/TimerHolder/Hours
 @onready var MinutesTextEdit = $Dates/TimerHolder/Minutes
 @onready var SecondsTextEdit = $Dates/TimerHolder/Seconds
+@onready var RoadsNode = $"../../../../Roads"
 
 ## Defining Important Constants
 const DATE_STRING_FORMAT: String = "%02d/%02d/%s"
