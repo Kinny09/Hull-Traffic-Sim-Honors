@@ -48,6 +48,7 @@ func _ready() -> void:
 				#var newAgentToWork: Agent = Agent.new(odPair, CarAsset.duplicate(), "car", pathToTake.duplicate())
 				#newAgentToWork.agentAsset.global_position = newAgentToWork.nextNode["position"]
 				#timetableOfAgents[odPairWorkTime].append(newAgentToWork)
+			timetableOfAgents.sort()
 
 	# Connecting the timer and the updateVisulization function
 	SimulationTimer.TIME_CHANGED.connect(updateVisulization)

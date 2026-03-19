@@ -1,9 +1,10 @@
-[gd_scene load_steps=21 format=3 uid="uid://cg6ndwf2gjjop"]
+[gd_scene load_steps=24 format=3 uid="uid://cg6ndwf2gjjop"]
 
 [ext_resource type="Script" uid="uid://d87vurja0aoo" path="res://scenes/popupMenuControllerScript.gd" id="1_wmj72"]
 [ext_resource type="Script" uid="uid://dcfxx7vtw1np5" path="res://scenes/loading_screen.gd" id="2_a0so0"]
 [ext_resource type="Script" uid="uid://c4big62xtijmx" path="res://scenes/date_controller.gd" id="2_koc25"]
 [ext_resource type="Script" uid="uid://cq8jfsc24rrvq" path="res://scenes/control_panel_controller.gd" id="4_3srwj"]
+[ext_resource type="Script" uid="uid://bu4luskctdw8c" path="res://scenes/timetable_controller.gd" id="5_43nqj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3srwj"]
 
@@ -65,6 +66,10 @@ SpinBox/styles/field_and_buttons_separator = SubResource("StyleBoxFlat_yt25b")
 SpinBox/styles/up_background = SubResource("StyleBoxFlat_hc060")
 SpinBox/styles/up_background_disabled = SubResource("StyleBoxFlat_vi10e")
 SpinBox/styles/up_down_buttons_separator = SubResource("StyleBoxFlat_5dop1")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_43nqj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r5r5w"]
 
 [node name="SimulationUI" type="Control"]
 layout_mode = 3
@@ -278,16 +283,113 @@ folded = true
 title = "Show Map Toggles"
 title_position = 1
 
-[node name="HeatmapToggle" type="HBoxContainer" parent="ControlPanel/ControlPanelHider"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlPanel/ControlPanelHider"]
 visible = false
 layout_mode = 2
 
-[node name="Label" type="Label" parent="ControlPanel/ControlPanelHider/HeatmapToggle"]
+[node name="HeatmapToggle" type="HBoxContainer" parent="ControlPanel/ControlPanelHider/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ControlPanel/ControlPanelHider/VBoxContainer/HeatmapToggle"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 text = "Show Heatmap:"
 
-[node name="CheckButton" type="CheckButton" parent="ControlPanel/ControlPanelHider/HeatmapToggle"]
+[node name="CheckButton" type="CheckButton" parent="ControlPanel/ControlPanelHider/VBoxContainer/HeatmapToggle"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="HSeparator" type="HSeparator" parent="ControlPanel/ControlPanelHider/VBoxContainer"]
+layout_mode = 2
+
+[node name="TimetableToggle" type="Button" parent="ControlPanel/ControlPanelHider/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "View Traffic Schedule"
+
+[node name="Timetable" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -164.60321
+offset_top = -185.0
+offset_right = 164.60321
+offset_bottom = 185.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_43nqj")
+
+[node name="TimetableController" type="Control" parent="Timetable"]
+layout_mode = 2
+script = ExtResource("5_43nqj")
+
+[node name="TimetableMargin" type="MarginContainer" parent="Timetable"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VSplitContainer" type="VSplitContainer" parent="Timetable/TimetableMargin"]
+layout_mode = 2
+dragging_enabled = false
+dragger_visibility = 1
+
+[node name="Header" type="HBoxContainer" parent="Timetable/TimetableMargin/VSplitContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Timetable/TimetableMargin/VSplitContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Traffic Timetable"
+
+[node name="CloseButton" type="Button" parent="Timetable/TimetableMargin/VSplitContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 11
+text = "X"
+
+[node name="TimetableScroller" type="ScrollContainer" parent="Timetable/TimetableMargin/VSplitContainer"]
+layout_mode = 2
+
+[node name="ItemList" type="VBoxContainer" parent="Timetable/TimetableMargin/VSplitContainer/TimetableScroller"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExampleItem" type="PanelContainer" parent="Timetable/TimetableMargin/VSplitContainer/TimetableScroller/ItemList"]
+visible = false
+self_modulate = Color(0.627451, 0.627451, 0.627451, 1)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_r5r5w")
+
+[node name="ItemRow" type="HBoxContainer" parent="Timetable/TimetableMargin/VSplitContainer/TimetableScroller/ItemList/ExampleItem"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Time" type="Label" parent="Timetable/TimetableMargin/VSplitContainer/TimetableScroller/ItemList/ExampleItem/ItemRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "[Time]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Sperator" type="Label" parent="Timetable/TimetableMargin/VSplitContainer/TimetableScroller/ItemList/ExampleItem/ItemRow"]
+layout_mode = 2
+text = ":"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NumberOfCars" type="Label" parent="Timetable/TimetableMargin/VSplitContainer/TimetableScroller/ItemList/ExampleItem/ItemRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "[NumberOfAgents]"
+horizontal_alignment = 1
+vertical_alignment = 1

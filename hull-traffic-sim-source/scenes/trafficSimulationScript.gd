@@ -31,9 +31,8 @@ func _ready() -> void:
 			var initalNumberOfAgents: int = residentialBuilding["workplaces"][workplaceID]
 			
 			var rng = RandomNumberGenerator.new()
-			var randomMinuteOffset = rng.randi_range(0, 10)
-			var workTime = TimeOnly.new(6,49 + randomMinuteOffset,0)
-			var homeTime = TimeOnly.new(7,30 + randomMinuteOffset,0)
+			var workTime = TimeOnly.new(8,rng.randi_range(0, 59),0)
+			var homeTime = TimeOnly.new(17,rng.randi_range(0, 59),0)
 			var newODPair = ODPair.new(origin, destination, workTime, homeTime)
 			newODPair.agentsUsing = initalNumberOfAgents
 			tableOfODPairs.append(newODPair)
