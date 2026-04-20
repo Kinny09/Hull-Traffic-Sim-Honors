@@ -5,7 +5,7 @@ extends Node
 @onready var RoadsNode = $"../Roads"
 
 ## Member Variables
-var unixDateTime: int = Time.get_unix_time_from_datetime_string("2026-01-01T06:48:00")
+var unixDateTime: int = Time.get_unix_time_from_datetime_string("2026-01-01T07:48:00")
 var dateDictionary: Dictionary
 
 ## Important constants for handling adding time

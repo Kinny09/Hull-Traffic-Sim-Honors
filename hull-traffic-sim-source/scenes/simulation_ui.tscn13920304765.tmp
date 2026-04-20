@@ -1,5 +1,6 @@
-[gd_scene load_steps=27 format=3 uid="uid://cg6ndwf2gjjop"]
+[gd_scene load_steps=28 format=3 uid="uid://cg6ndwf2gjjop"]
 
+[ext_resource type="Script" uid="uid://d87vurja0aoo" path="res://scenes/popupMenuControllerScript.gd" id="1_wmj72"]
 [ext_resource type="Script" uid="uid://cv52mpmt3wyu2" path="res://scenes/SelectionMenuControllerScript.gd" id="1_x06av"]
 [ext_resource type="Script" uid="uid://dcfxx7vtw1np5" path="res://scenes/loading_screen.gd" id="2_a0so0"]
 [ext_resource type="Script" uid="uid://c4big62xtijmx" path="res://scenes/date_controller.gd" id="2_koc25"]
@@ -88,14 +89,13 @@ mouse_filter = 2
 theme = SubResource("Theme_x08wq")
 
 [node name="SelectionMenu" type="PanelContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
+offset_left = -150.0
 offset_top = -250.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -122,7 +122,6 @@ layout_mode = 2
 [node name="Title" type="Label" parent="SelectionMenu/Margin/ListOfSelectionInformation/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
 text = "SelectionTitle"
 horizontal_alignment = 1
 
@@ -130,8 +129,40 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 8
 text = "X"
+
+[node name="PopupMenu" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -202.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="PopupMenuController" type="Control" parent="PopupMenu"]
+layout_mode = 2
+mouse_filter = 1
+script = ExtResource("1_wmj72")
+
+[node name="SelectionInfoBox" type="MarginContainer" parent="PopupMenu"]
+layout_mode = 2
+
+[node name="Background" type="Panel" parent="PopupMenu/SelectionInfoBox"]
+layout_mode = 2
+
+[node name="Items" type="VBoxContainer" parent="PopupMenu/SelectionInfoBox/Background"]
+custom_minimum_size = Vector2(0, 610)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="DateContainer" type="PanelContainer" parent="."]
 layout_mode = 0
