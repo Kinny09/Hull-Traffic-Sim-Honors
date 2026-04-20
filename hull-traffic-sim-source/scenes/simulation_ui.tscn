@@ -1,10 +1,11 @@
-[gd_scene load_steps=24 format=3 uid="uid://cg6ndwf2gjjop"]
+[gd_scene load_steps=26 format=3 uid="uid://cg6ndwf2gjjop"]
 
 [ext_resource type="Script" uid="uid://d87vurja0aoo" path="res://scenes/popupMenuControllerScript.gd" id="1_wmj72"]
 [ext_resource type="Script" uid="uid://dcfxx7vtw1np5" path="res://scenes/loading_screen.gd" id="2_a0so0"]
 [ext_resource type="Script" uid="uid://c4big62xtijmx" path="res://scenes/date_controller.gd" id="2_koc25"]
 [ext_resource type="Script" uid="uid://cq8jfsc24rrvq" path="res://scenes/control_panel_controller.gd" id="4_3srwj"]
 [ext_resource type="Script" uid="uid://bu4luskctdw8c" path="res://scenes/timetable_controller.gd" id="5_43nqj"]
+[ext_resource type="Script" uid="uid://edsjgqi82qom" path="res://scenes/AgentCounterScript.gd" id="6_r5r5w"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3srwj"]
 
@@ -70,6 +71,8 @@ SpinBox/styles/up_down_buttons_separator = SubResource("StyleBoxFlat_5dop1")
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_43nqj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r5r5w"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x06av"]
 
 [node name="SimulationUI" type="Control"]
 layout_mode = 3
@@ -391,3 +394,31 @@ theme_override_font_sizes/font_size = 14
 text = "[NumberOfAgents]"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="AgentCounter" type="PanelContainer" parent="."]
+layout_mode = 1
+offset_left = 308.1932
+offset_right = 548.19324
+offset_bottom = 52.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_x06av")
+
+[node name="AgentCounterController" type="Control" parent="AgentCounter"]
+layout_mode = 2
+script = ExtResource("6_r5r5w")
+
+[node name="VListBox" type="VBoxContainer" parent="AgentCounter"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Title" type="Label" parent="AgentCounter/VListBox"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Number of Simulated Agents:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NumberOfAgentsLabel" type="Label" parent="AgentCounter/VListBox"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "0"
+horizontal_alignment = 1

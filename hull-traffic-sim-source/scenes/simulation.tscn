@@ -64,8 +64,8 @@ script = ExtResource("1_y5vwh")
 
 [node name="Buildings" type="Node" parent="."]
 script = ExtResource("6_c8cjm")
-metadata/totalPopulation = 1
-metadata/totalJobs = 1
+metadata/totalPopulation = 14000
+metadata/totalJobs = 14000
 
 [node name="Middle" type="Polygon2D" parent="."]
 color = Color(1, 0.13333334, 1, 1)
