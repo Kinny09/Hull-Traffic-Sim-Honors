@@ -34,9 +34,6 @@ func toggleTimetable():
 		Timetable.visible = true
 		timeTableVisible = true
 	
-	
-		
-		
 class TimetableRowFactory:
 	var ItemContainer: PanelContainer
 	var ItemRow: HBoxContainer
